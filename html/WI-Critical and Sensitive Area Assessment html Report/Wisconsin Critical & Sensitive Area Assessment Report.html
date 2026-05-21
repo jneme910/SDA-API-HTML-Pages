@@ -1,64 +1,42 @@
 <!DOCTYPE html>
-<!-- saved from url=(0134)file:///C:/Users/Jason.L.Nemecek/Box/github/NRCS-Soil-Data-Access/sandbox/Wisconsin-Critical-and-Sensitive-Area-Assessment-Report.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wisconsin Critical &amp; Sensitive Area Assessment Report</title>
+  <title>Wisconsin Critical & Sensitive Area Assessment Report</title>
 
   <style>
-    /* Base layout/style */
     :root {
-      --blue: #003f87;
-      --blue2: #004d7a;
-      --border: #e0e0e0;
-      --text: #222;
-      --muted: #666;
-      --bg: #f5f5f5;
-      --info-bg: #e8f0f7;
-      --error-bg: #ffe8ec;
-      --error: #b00020;
+      --blue: #003f87; --blue2: #004d7a; --border: #e0e0e0;
+      --text: #222; --muted: #666; --bg: #f5f5f5;
+      --info-bg: #e8f0f7; --error-bg: #ffe8ec; --error: #b00020;
     }
     * { box-sizing: border-box; }
 
     body {
-      margin: 0;
-      background: var(--bg);
+      margin: 0; background: var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
-      line-height: 1.45;
+      color: var(--text); line-height: 1.45;
     }
 
     .header {
       background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
-      color: #fff;
-      padding: 1.5rem 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      color: #fff; padding: 1.5rem 2rem; box-shadow: 0 4px 12px rgba(0,0,0,.15);
     }
     .header h1 { margin: 0 0 .3rem; font-size: 1.8rem; }
     .header p { margin: 0; opacity: .95; }
 
-    /* WIDER viewing area */
-    .container {
-      max-width: 98vw;           /* widened from 1400px to near full viewport width */
-      margin: 0 auto;
-      padding: 1.5rem 2rem;
-    }
-
+    .container { max-width: 98vw; margin: 0 auto; padding: 1.5rem 2rem; }
     .section {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.1);
-      padding: 1rem 1.25rem;
-      margin-bottom: 1rem;
-      border: 1px solid var(--border);
+      background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      padding: 1rem 1.25rem; margin-bottom: 1rem; border: 1px solid var(--border);
     }
 
     label { font-weight: 600; color: var(--blue); display: block; margin-bottom: .5rem; }
     select {
       width: 100%; max-width: 520px; padding: .6rem .7rem;
-      border: 2px solid #d0d0d0; border-radius: 6px; font-size: 1rem;
-      background: #fff;
+      border: 2px solid #d0d0d0; border-radius: 6px; font-size: 1rem; background: #fff;
     }
     .status-message {
       display: none; margin-top: .8rem;
@@ -75,38 +53,94 @@
       padding: .45rem .7rem; border-radius: 6px; cursor: pointer; font-weight: 600;
     }
     .btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
-    /* Table wrapper widened & scrollable horizontally */
-    .table-wrapper { 
-      margin-top: .5rem; 
-      overflow-x: auto;            /* horizontal scroll when needed */
-      overflow-y: hidden; 
+    /* Scroll container (vertical + horizontal) — supports sticky header */
+    .table-wrapper {
+      max-height: 80vh;
+      overflow-y: auto;      /* vertical scroll */
+      overflow-x: auto;      /* horizontal scroll */
+      position: relative;
       border: 1px solid #e0e0e0;
       border-radius: 6px;
       background: #fff;
     }
 
-    /* Table base styling (works without any external CSS) */
-    table { width: 100%; border-collapse: collapse; font-size: .98rem; min-width: 980px; }
-    thead { background: var(--blue); color: #fff; }
-    th, td { padding: .6rem .7rem; border-bottom: 1px solid #e6e6e6; }
-    th {
-      position: relative; white-space: nowrap; cursor: pointer;
-    }
-    th .sort-ind {
-      position: absolute; right: .6rem; opacity: .85; font-size: .85rem;
-    }
-    tbody tr:nth-child(odd) { background-color: #f8fbff; }
-    tbody tr:nth-child(even) { background-color: #ffffff; }
+    /* --- CORRECTED SCRIPT --- */
 
-    .error {
-      color: var(--error); background: var(--error-bg);
-      border-left: 5px solid var(--error); padding: .6rem .8rem; border-radius: 4px; margin-bottom: .6rem;
+table { 
+    table-layout: fixed; 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: .98rem; 
+    /* REMOVED: min-width: 980px; This was forcing your table to be too wide. */
+}
+
+thead { 
+    background: var(--blue); 
+    color: #fff; 
+}
+
+th, td { 
+    overflow-wrap: break-word; 
+    padding: .6rem .7rem; 
+    border-bottom: 1px solid #e6e6e6; 
+}
+
+th { 
+    position: relative; 
+    /* REMOVED: white-space: nowrap; This prevented header text from wrapping. */
+    cursor: pointer; 
+}
+
+/* --- ADDED: The CORRECT way to set column widths --- */
+/* Target the header of each column you want to shorten. */
+/* Example: Make the 1st column 15% wide */
+th:nth-child(1) { 
+    width: 5%; 
+}
+
+th:nth-child(3) { 
+    width: 40%; 
+}
+/* T
+/* Example: Make the 3rd column 20% wide */
+th:nth-child(3) { 
+    width: 10%; 
+}
+/* The other columns will adjust automatically */
+
+
+th .sort-ind { 
+    position: absolute; 
+    right: .6rem; 
+    opacity: .85; 
+    font-size: .85rem; 
+}
+
+tbody tr:nth-child(odd) {
+    /* REMOVED: width property from here. It doesn't work on table rows. */
+    background-color: #f8fbff; 
+}
+
+tbody tr:nth-child(even) { 
+    /* REMOVED: width property from here. It doesn't work on table rows. */
+    background-color: #ffffff; 
+}
+
+    /* Sticky header cells */
+    table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #003f87;  /* match the thead color */
+      color: #fff;
     }
-    .info {
-      color: var(--blue); background: var(--info-bg);
-      border-left: 5px solid var(--blue); padding: .6rem .8rem; border-radius: 4px; margin-bottom: .6rem;
-    }
+
+    .error { color: var(--error); background: var(--error-bg); border-left: 5px solid var(--error);
+      padding: .6rem .8rem; border-radius: 4px; margin-bottom: .6rem; }
+    .info { color: var(--blue); background: var(--info-bg); border-left: 5px solid var(--blue);
+      padding: .6rem .8rem; border-radius: 4px; margin-bottom: .6rem; }
     .muted { color: var(--muted); }
   </style>
 </head>
@@ -114,43 +148,59 @@
 
   <div class="header">
     <h1>Wisconsin Critical &amp; Sensitive Area Assessment Report</h1>
-    <p>Select a Soil Survey Area (SSA). Sorted by Map Unit Name. Data from NRCS SDA Tabular API.</p>
+    <p>A <strong>Area Risk Assessment</strong> under NRCS guidance is a process to identify and map ecologically or hydrologically sensitive land features so that conservation practices, grazing systems, or development can be planned to avoid or minimize harm. Select a Soil Survey Area (SSA). Sorted by Map Unit Name. Data from NRCS SDA Tabular API.</p>
+
   </div>
 
   <div class="container">
     <div class="section">
       <label for="ssa">Select a Soil Survey Area:</label>
-      <select id="ssa"><option value="" style="display:none">(select a Soil Survey Area)</option><option value="WI001">Adams County, Wisconsin</option><option value="WI003">Ashland County, Wisconsin</option><option value="WI005">Barron County, Wisconsin</option><option value="WI007">Bayfield County, Wisconsin</option><option value="WI009">Brown County, Wisconsin</option><option value="WI011">Buffalo County, Wisconsin</option><option value="WI013">Burnett County, Wisconsin</option><option value="WI015">Calumet County, Wisconsin</option><option value="WI017">Chippewa County, Wisconsin</option><option value="WI019">Clark County, Wisconsin</option><option value="WI021">Columbia County, Wisconsin</option><option value="WI023">Crawford County, Wisconsin</option><option value="WI025">Dane County, Wisconsin</option><option value="WI027">Dodge County, Wisconsin</option><option value="WI029">Door County, Wisconsin</option><option value="WI031">Douglas County, Wisconsin</option><option value="WI033">Dunn County, Wisconsin</option><option value="WI035">Eau Claire County, Wisconsin</option><option value="WI037">Florence County, Wisconsin</option><option value="WI039">Fond du Lac County, Wisconsin</option><option value="WI041">Forest County, Wisconsin</option><option value="WI043">Grant County, Wisconsin</option><option value="WI045">Green County, Wisconsin</option><option value="WI047">Green Lake County, Wisconsin</option><option value="WI049">Iowa County, Wisconsin</option><option value="WI051">Iron County, Wisconsin</option><option value="WI053">Jackson County, Wisconsin</option><option value="WI055">Jefferson County, Wisconsin</option><option value="WI057">Juneau County, Wisconsin</option><option value="WI059">Kenosha County, Wisconsin</option><option value="WI061">Kewaunee County, Wisconsin</option><option value="WI063">La Crosse County, Wisconsin</option><option value="WI065">Lafayette County, Wisconsin</option><option value="WI067">Langlade County, Wisconsin</option><option value="WI069">Lincoln County, Wisconsin</option><option value="WI071">Manitowoc County, Wisconsin</option><option value="WI073">Marathon County, Wisconsin</option><option value="WI075">Marinette County, Wisconsin</option><option value="WI077">Marquette County, Wisconsin</option><option value="WI078">Menominee County, Wisconsin</option><option value="WI079">Milwaukee County, Wisconsin</option><option value="WI081">Monroe County, Wisconsin</option><option value="WI083">Oconto County, Wisconsin</option><option value="WI085">Oneida County, Wisconsin</option><option value="WI087">Outagamie County, Wisconsin</option><option value="WI089">Ozaukee County, Wisconsin</option><option value="WI091">Pepin County, Wisconsin</option><option value="WI093">Pierce County, Wisconsin</option><option value="WI095">Polk County, Wisconsin</option><option value="WI097">Portage County, Wisconsin</option><option value="WI099">Price County, Wisconsin</option><option value="WI101">Racine County, Wisconsin</option><option value="WI103">Richland County, Wisconsin</option><option value="WI105">Rock County, Wisconsin</option><option value="WI107">Rusk County, Wisconsin</option><option value="WI111">Sauk County, Wisconsin</option><option value="WI113">Sawyer County, Wisconsin</option><option value="WI115">Shawano County, Wisconsin</option><option value="WI117">Sheboygan County, Wisconsin</option><option value="WI109">St. Croix County, Wisconsin</option><option value="WI119">Taylor County, Wisconsin</option><option value="WI121">Trempealeau County, Wisconsin</option><option value="WI123">Vernon County, Wisconsin</option><option value="WI125">Vilas County, Wisconsin</option><option value="WI127">Walworth County, Wisconsin</option><option value="WI129">Washburn County, Wisconsin</option><option value="WI131">Washington County, Wisconsin</option><option value="WI133">Waukesha County, Wisconsin</option><option value="WI135">Waupaca County, Wisconsin</option><option value="WI137">Waushara County, Wisconsin</option><option value="WI139">Winnebago County, Wisconsin</option><option value="WI141">Wood County, Wisconsin</option></select>
-      <div id="status" class="status-message" style="display: block;">Selected: Ashland County, Wisconsin</div>
+      <select id="ssa">
+        <option value="" style="display:none">(select a Soil Survey Area)</option>
+        <!-- dynamic options will be loaded from SDA sacatalog -->
+      </select>
+      <div id="status" class="status-message"></div>
     </div>
 
     <div class="section">
       <div id="messages"></div>
       <div class="toolbar">
-        <button class="btn" id="btnCsv">Export CSV</button>
-        <button class="btn" id="btnXls">Export Excel (XLS)</button>
-        <span id="rowCount" class="muted">193 rows</span>
+        <button class="btn" id="btnCsv" disabled>Export CSV</button>
+        <button class="btn" id="btnXls" disabled>Export Excel (XLS)</button>
+        <span id="rowCount" class="muted"></span>
       </div>
-      <div id="tableContainer" class="table-wrapper"><table id="dataTable"><thead><tr><th>areasymbol<span class="sort-ind"></span></th><th>areaname<span class="sort-ind"></span></th><th>muname<span class="sort-ind"></span></th><th>musym<span class="sort-ind"></span></th><th>mukey<span class="sort-ind"></span></th><th>compname<span class="sort-ind"></span></th><th>localphase<span class="sort-ind"></span></th><th>comppct_r<span class="sort-ind"></span></th><th>slope_r<span class="sort-ind"></span></th><th>drainagecl<span class="sort-ind"></span></th><th>flodfreq<span class="sort-ind"></span></th><th>pondfreq<span class="sort-ind"></span></th><th>first_restriction_kind<span class="sort-ind"></span></th><th>rv_first_restriction_depth ft<span class="sort-ind"></span></th><th>hydric_rating<span class="sort-ind"></span></th><th>cokey<span class="sort-ind"></span></th></tr></thead><tbody><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Abbaye loamy sand, 6 to 15 percent slopes</td><td>6609C</td><td>1702608</td><td>Abbaye</td><td></td><td>90</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>2.66</td><td>Nonhydric</td><td>27501622</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Abbaye-Lapoin complex, 0 to 6 percent slopes</td><td>6611B</td><td>1444460</td><td>Abbaye</td><td></td><td>55</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>2.66</td><td>Nonhydric</td><td>27501624</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Abbaye-Zeba complex, 0 to 6 percent slopes, very stony</td><td>6614B</td><td>1444461</td><td>Abbaye</td><td></td><td>55</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>2.66</td><td>Nonhydric</td><td>27501627</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Alcona fine sandy loam, lake terrace, 15 to 30 percent slopes</td><td>6317E</td><td>1444401</td><td>Alcona</td><td></td><td>87</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501633</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Allendale loamy fine sand, 0 to 3 percent slopes</td><td>6226A</td><td>1444388</td><td>Allendale</td><td></td><td>80</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501639</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Allendale-Wakeley-Kinross complex, 0 to 6 percent slopes</td><td>6826B</td><td>1700374</td><td>Allendale</td><td></td><td>35</td><td>3</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27501643</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Amasa cobbly fine sandy loam, 6 to 18 percent slopes</td><td>5684D</td><td>1702883</td><td>Amasa</td><td></td><td>80</td><td>12</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501648</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Amasa-Karlin complex, esker, 2 to 18 percent slopes</td><td>5146C</td><td>1702829</td><td>Amasa</td><td></td><td>54</td><td>10</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501543</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Annalake fine sandy loam, 2 to 6 percent slopes</td><td>3917B</td><td>1444513</td><td>Annalake</td><td></td><td>90</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501652</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Annalake fine sandy loam, 6 to 15 percent slopes</td><td>3917C</td><td>1444514</td><td>Annalake</td><td></td><td>87</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501656</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Annalake fine sandy loam, lake terrace, 2 to 6 percent slopes</td><td>6517B</td><td>1444437</td><td>Annalake</td><td></td><td>85</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501661</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Annalake fine sandy loam, lake terrace, 6 to 15 percent slopes</td><td>6517C</td><td>1444438</td><td>Annalake</td><td></td><td>80</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501666</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Annriver silt loam, 0 to 2 percent slopes</td><td>3520A</td><td>1542701</td><td>Annriver</td><td></td><td>85</td><td>1</td><td>Very poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501670</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Arnheim mucky silt loam, 0 to 1 percent slopes, frequently flooded</td><td>6905A</td><td>1444357</td><td>Arnheim</td><td></td><td>85</td><td>1</td><td>Poorly drained</td><td>Frequent</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501673</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Au Gres loamy sand, 0 to 3 percent slopes</td><td>3276A</td><td>1444535</td><td>Au Gres</td><td></td><td>85</td><td>1</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501595</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Beaches, 2 to 12 percent slopes</td><td>B</td><td>1444359</td><td>Beaches</td><td></td><td>97</td><td></td><td></td><td></td><td></td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501675</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Bowstring muck, 0 to 1 percent slopes, frequently flooded</td><td>4061A</td><td>1444421</td><td>Bowstring</td><td></td><td>85</td><td>1</td><td>Very poorly drained</td><td>Frequent</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501676</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Bowstring-Arnheim complex, 0 to 1 percent slopes, frequently flooded</td><td>5374A</td><td>1702873</td><td>Bowstring</td><td>frequently flooded</td><td>50</td><td>0</td><td>Very poorly drained</td><td>Frequent</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501573</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Butternut silt loam, 1 to 6 percent slopes, very stony</td><td>3538B</td><td>1444580</td><td>Butternut</td><td>very stony</td><td>80</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501679</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Butternut silt loam, 15 to 30 percent slopes, very stony</td><td>3538E</td><td>1444583</td><td>Butternut</td><td>very stony</td><td>90</td><td>17</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501682</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Butternut silt loam, 6 to 15 percent slopes, very stony</td><td>3538C</td><td>1702820</td><td>Butternut</td><td>very stony</td><td>80</td><td>7</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501684</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Butternut-Glidden complex, 15 to 30 percent slopes, stony</td><td>3835E</td><td>1542716</td><td>Butternut</td><td></td><td>60</td><td>23</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501690</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Butternut-Glidden complex, 6 to 15 percent slopes, stony</td><td>3835C</td><td>1542715</td><td>Butternut</td><td></td><td>60</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501694</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Butternut-Spiderlake complex, 1 to 6 percent slopes, stony</td><td>3834B</td><td>1542714</td><td>Butternut</td><td></td><td>50</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501698</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cable silt loam, 0 to 2 percent slopes, very stony</td><td>3738A</td><td>1444598</td><td>Cable</td><td>very stony</td><td>75</td><td>2</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501703</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cathro muck, drainageway, 0 to 1 percent slopes</td><td>5373A</td><td>1702872</td><td>Cathro</td><td></td><td>85</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501570</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Chabeneau-Annalake complex, 0 to 6 percent slopes</td><td>5543B</td><td>1702880</td><td>Chabeneau</td><td></td><td>50</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501487</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Chabeneau-Channing-Gogebic complex, 0 to 6 percent slopes, stony</td><td>5689B</td><td>1702884</td><td>Chabeneau</td><td></td><td>35</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501580</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cornucopia silt loam, 15 to 45 percent slopes</td><td>6481F</td><td>1444428</td><td>Cornucopia</td><td></td><td>80</td><td>30</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501708</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cornucopia silt loam, 6 to 15 percent slopes</td><td>6481C</td><td>1444427</td><td>Cornucopia</td><td></td><td>80</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501713</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Croswell sand, 0 to 6 percent slopes</td><td>6500B</td><td>1444431</td><td>Croswell</td><td></td><td>82</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501718</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Croswell-Chinwhisker complex, 0 to 3 percent slopes</td><td>3591A</td><td>1444453</td><td>Croswell</td><td></td><td>50</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501723</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cublake loamy sand, 0 to 3 percent slopes</td><td>3905A</td><td>1601900</td><td>Cublake</td><td></td><td>80</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501728</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cublake-Croswell-Ashwabay complex, 0 to 6 percent slopes</td><td>6705B</td><td>1444477</td><td>Cublake</td><td></td><td>35</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501735</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cublake-Croswell-Ashwabay complex, 6 to 15 percent slopes</td><td>6705C</td><td>1444478</td><td>Cublake</td><td></td><td>35</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501742</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Cublake-Keweenaw, stony complex, 0 to 6 percent slopes</td><td>6385B</td><td>1711685</td><td>Cublake</td><td></td><td>50</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501746</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Dawson, Greenwood, and Loxley soils, 0 to 1 percent slopes</td><td>5140A</td><td>1702827</td><td>Dawson</td><td></td><td>40</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501533</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Deerton-Brownstone complex, 0 to 6 percent slopes, very stony</td><td>3608B</td><td>1702606</td><td>Deerton</td><td></td><td>50</td><td>3</td><td>Well drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>3.25</td><td>Nonhydric</td><td>27501526</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Deerton-Brownstone complex, 6 to 15 percent slopes, very stony</td><td>3608C</td><td>1702607</td><td>Deerton</td><td></td><td>50</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>3.25</td><td>Nonhydric</td><td>27501531</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Denomie silt loam, 15 to 30 percent slopes</td><td>6204E</td><td>1444568</td><td>Denomie</td><td></td><td>90</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501750</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Denomie silt loam, 30 to 60 percent slopes</td><td>6204F</td><td>1444569</td><td>Denomie</td><td></td><td>90</td><td>45</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501753</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Denomie silt loam, 6 to 15 percent slopes</td><td>6204C</td><td>1444567</td><td>Denomie</td><td></td><td>85</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501757</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Denomie-Gichigami complex, 2 to 6 percent slopes</td><td>6204B</td><td>1444677</td><td>Denomie</td><td></td><td>50</td><td>4</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501760</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Dishno-Gogebic-Peshekee-Rock outcrop complex, 18 to 35 percent slopes, very stony</td><td>5869E</td><td>1702869</td><td>Dishno</td><td>very stony</td><td>35</td><td>27</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>3.84</td><td>Nonhydric</td><td>27502274</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Fence silt loam, lake terrace, 0 to 6 percent slopes</td><td>6242B</td><td>1444389</td><td>Fence</td><td></td><td>85</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501779</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Fence silt loam, lake terrace, 6 to 15 percent slopes</td><td>6242C</td><td>1444390</td><td>Fence</td><td></td><td>85</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501784</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Flink sand, 0 to 3 percent slopes</td><td>6526A</td><td>1444440</td><td>Flink</td><td></td><td>75</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502284</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Fordum silt loam, 0 to 2 percent slopes, frequently flooded</td><td>3555A</td><td>1444442</td><td>Fordum</td><td>sandy substratum</td><td>85</td><td>1</td><td>Poorly drained</td><td>Frequent</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501788</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Fordum, Totagatic, and Bowstring soils, 0 to 1 percent slopes, frequently flooded</td><td>9050A</td><td>1444557</td><td>Fordum</td><td>frequently flooded</td><td>45</td><td>0</td><td>Poorly drained</td><td>Frequent</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501496</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Foxpaw-Gay, stony complex, 0 to 2 percent slopes</td><td>5425A</td><td>1703711</td><td>Foxpaw</td><td></td><td>45</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501586</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gichigami-Oronto complex, 0 to 6 percent slopes</td><td>6444B</td><td>1444573</td><td>Gichigami</td><td></td><td>70</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501790</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Glidden silt loam, 0 to 6 percent slopes, stony</td><td>3730B</td><td>1542707</td><td>Glidden</td><td></td><td>90</td><td>3</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501794</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Glidden silt loam, 15 to 30 percent slopes, stony</td><td>3730E</td><td>1542710</td><td>Glidden</td><td></td><td>95</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501796</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Glidden silt loam, 6 to 15 percent slopes, stony</td><td>3730C</td><td>1542709</td><td>Glidden</td><td></td><td>92</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501799</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic fine sandy loam, 1 to 6 percent slopes, stony</td><td>5427B</td><td>1444432</td><td>Gogebic</td><td>stony</td><td>85</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.64</td><td>Predominantly Nonhydric</td><td>27502299</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic fine sandy loam, 1 to 6 percent slopes. very stony, rocky</td><td>5354B</td><td>1702862</td><td>Gogebic</td><td>very stony</td><td>90</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.64</td><td>Nonhydric</td><td>27501599</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic silt loam, 1 to 6 percent slopes, very stony, rocky</td><td>5351B</td><td>1702856</td><td>Gogebic</td><td>very stony</td><td>85</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.64</td><td>Nonhydric</td><td>27501602</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic silt loam, 12 to 35 percent slopes, very stony, rocky</td><td>5351E</td><td>1702858</td><td>Gogebic</td><td>very stony</td><td>85</td><td>15</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.64</td><td>Nonhydric</td><td>27501801</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic silt loam, 6 to 18 percent slopes, very stony, rocky</td><td>5351D</td><td>1702857</td><td>Gogebic</td><td>very stony</td><td>85</td><td>8</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.64</td><td>Nonhydric</td><td>27502293</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic, very stony-Annalake complex, 0 to 6 percent slopes</td><td>6145B</td><td>1444523</td><td>Gogebic</td><td></td><td>50</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.13</td><td>Nonhydric</td><td>27501808</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic, very stony-Annalake complex, 6 to 15 percent slopes</td><td>6145C</td><td>1444524</td><td>Gogebic</td><td></td><td>60</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.13</td><td>Nonhydric</td><td>27501812</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic, very stony-Pence, very stony-Cathro complex, 0 to 18 percent slopes</td><td>5172C</td><td>1702853</td><td>Gogebic</td><td>sandy substratum</td><td>60</td><td>12</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.67</td><td>Partially Hydric</td><td>27501560</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic, very stony-Pence, very stony-Cathro complex, 0 to 35 percent slopes</td><td>5172D</td><td>1702854</td><td>Gogebic</td><td>sandy substratum</td><td>60</td><td>27</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.67</td><td>Partially Hydric</td><td>27501565</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic, very stony-Pence, very stony-Cathro complex, 0 to 6 percent slopes</td><td>5172B</td><td>1702852</td><td>Gogebic</td><td>sandy substratum</td><td>60</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.67</td><td>Partially Hydric</td><td>27501555</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic-Metonga-Rock outcrop complex, 10 to 35 percent slopes, very stony</td><td>5809E</td><td>1444491</td><td>Gogebic</td><td></td><td>40</td><td>23</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.13</td><td>Predominantly Nonhydric</td><td>27501817</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic-Metonga-Rock outcrop complex, 6 to 18 percent slopes, very stony</td><td>5809D</td><td>1444490</td><td>Gogebic</td><td></td><td>40</td><td>12</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.13</td><td>Predominantly Nonhydric</td><td>27501820</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Gogebic-Pence complex, 18 to 35 percent slopes, very stony</td><td>5173E</td><td>1702855</td><td>Gogebic</td><td>sandy substratum</td><td>60</td><td>27</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.67</td><td>Nonhydric</td><td>27501825</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Grayling sand, beaches, 2 to 12 percent slopes</td><td>6599C</td><td>1444587</td><td>Grayling</td><td>beaches</td><td>95</td><td>7</td><td>Excessively drained</td><td>None</td><td></td><td>No Data</td><td></td><td>Nonhydric</td><td>27501827</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Haplosaprists peats and mucks, 0 to 1 percent slopes</td><td>9155A</td><td>1444563</td><td>Markey</td><td></td><td>30</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501515</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Iosco loamy sand, 0 to 4 percent slopes</td><td>6514B</td><td>1444435</td><td>Iosco</td><td></td><td>85</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501831</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Karlin loamy fine sand, 0 to 6 percent slopes</td><td>3217B</td><td>1444386</td><td>Karlin</td><td></td><td>80</td><td>3</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501836</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Karlin loamy fine sand, 6 to 15 percent slopes</td><td>3217C</td><td>1444387</td><td>Karlin</td><td></td><td>80</td><td>11</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501841</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Kellogg-Allendale-Ashwabay complex, 0 to 15 percent slopes</td><td>6713C</td><td>1444482</td><td>Kellogg</td><td></td><td>40</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501846</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Kellogg-Allendale-Ashwabay complex, 2 to 6 percent slopes</td><td>6713B</td><td>1444481</td><td>Kellogg</td><td></td><td>35</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501853</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw, stony-Rubicon complex, 0 to 6 percent slopes</td><td>6874B</td><td>1444506</td><td>Keweenaw</td><td></td><td>60</td><td>4</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501855</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw, stony-Rubicon complex, 6 to 15 percent slopes</td><td>6874C</td><td>1444507</td><td>Keweenaw</td><td></td><td>60</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501859</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw-Pence complex, 0 to 6 percent slopes, stony</td><td>3670B</td><td>1444467</td><td>Keweenaw</td><td></td><td>55</td><td>3</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501862</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw-Pence complex, 15 to 45 percent slopes, stony</td><td>3670F</td><td>1444469</td><td>Keweenaw</td><td></td><td>50</td><td>30</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501867</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw-Pence complex, 6 to 15 percent slopes, stony</td><td>3670C</td><td>1444468</td><td>Keweenaw</td><td></td><td>50</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501871</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw-Sayner-Vilas complex, 0 to 6 percent slopes, stony</td><td>3369B</td><td>1611077</td><td>Keweenaw</td><td>stony</td><td>35</td><td>4</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501875</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw-Sayner-Vilas complex, 1 to 15 percent slopes, stony</td><td>3369C</td><td>1611078</td><td>Keweenaw</td><td>stony</td><td>35</td><td>8</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501885</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Keweenaw-Sayner-Vilas complex, 5 to 35 percent slopes, stony</td><td>3369E</td><td>1611079</td><td>Keweenaw</td><td>stony</td><td>35</td><td>20</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501890</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Kinross muck, 0 to 2 percent slopes</td><td>3445A</td><td>1444420</td><td>Kinross</td><td></td><td>80</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501895</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Landfill</td><td>LDF</td><td>1703612</td><td>Dumps</td><td>landfill</td><td>100</td><td></td><td></td><td></td><td></td><td>No Data</td><td></td><td>Nonhydric</td><td>27501896</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Lerch-Herbster complex, 0 to 3 percent slopes</td><td>6479A</td><td>1444425</td><td>Lerch</td><td></td><td>50</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27501901</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Loxley and Beseman soils, 0 to 1 percent slopes</td><td>3014A</td><td>1542699</td><td>Loxley</td><td></td><td>45</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Occasional</td><td>No Data</td><td></td><td>Hydric</td><td>27501905</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Loxley, Beseman, and Dawson peats, 0 to 1 percent slopes</td><td>3034A</td><td>1700372</td><td>Loxley</td><td></td><td>40</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501911</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Lupton and Cathro soils, 0 to 1 percent slopes</td><td>3008A</td><td>1542698</td><td>Lupton</td><td></td><td>45</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27502290</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Lupton, Cathro, and Tawas soils, 0 to 1 percent slopes</td><td>3045A</td><td>1444414</td><td>Lupton</td><td></td><td>40</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501914</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Lupton-Pleine-Cathro complex, 0 to 1 percent slopes</td><td>5141A</td><td>1702828</td><td>Lupton</td><td></td><td>60</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501538</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Manistee-Kellogg-Ashwabay complex, 15 to 45 percent slopes</td><td>6813F</td><td>1444492</td><td>Manistee</td><td></td><td>40</td><td>30</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501920</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Manitowish sandy loam, 0 to 3 percent slopes</td><td>3515A</td><td>1444436</td><td>Manitowish</td><td></td><td>80</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501923</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Meehan sand, beaches, 0 to 2 percent slopes</td><td>6597A</td><td>1444585</td><td>Meehan</td><td>beaches</td><td>90</td><td>1</td><td>Somewhat poorly drained</td><td>None</td><td></td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501930</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Menominee loamy sand, 15 to 30 percent slopes</td><td>6512E</td><td>1702605</td><td>Menominee</td><td></td><td>85</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501933</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Michigamme-Schweitzer-Peshekee-Rock outcrop complex, 35 to 55 percent slopes, very stony</td><td>5369F</td><td>1702870</td><td>Michigamme</td><td>very stony</td><td>30</td><td>45</td><td>Well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.10</td><td>Nonhydric</td><td>27501772</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Michigamme-Schweitzer-Peshekee-Rock outcrop complex, 55 to 75 percent slopes, very stony</td><td>5369G</td><td>1702871</td><td>Michigamme</td><td>very stony</td><td>30</td><td>65</td><td>Well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.10</td><td>Nonhydric</td><td>27501763</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Minocqua muck, 0 to 2 percent slopes</td><td>3193A</td><td>1444377</td><td>Minocqua</td><td></td><td>80</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501935</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Minocqua, Cable and Pleine soils, 0 to 2 percent slopes, very stony</td><td>9051A</td><td>1444558</td><td>Minocqua</td><td></td><td>40</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27501498</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Minocqua-Pleine-Cathro complex, 0 to 2 percent slopes</td><td>5170A</td><td>1702850</td><td>Minocqua</td><td></td><td>50</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27501546</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Miscellaneous water</td><td>M-W</td><td>1444564</td><td>Water</td><td>miscellaneous</td><td>100</td><td></td><td></td><td></td><td></td><td>No Data</td><td></td><td>Nonhydric</td><td>27501484</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Moppet, occasionally flooded-Fordum, frequently flooded complex, 0 to 3 percent slopes</td><td>3755A</td><td>1542713</td><td>Moppet</td><td></td><td>45</td><td>2</td><td>Moderately well drained</td><td>Occasional</td><td>None</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27501941</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Moquah fine sandy loam, 0 to 3 percent slopes, frequently flooded</td><td>3936A</td><td>1444358</td><td>Moquah</td><td></td><td>85</td><td>2</td><td>Moderately well drained</td><td>Frequent</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501945</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Moquah-Arnheim complex, 0 to 3 percent slopes, frequently flooded</td><td>5504A</td><td>1711697</td><td>Moquah</td><td>frequently flooded</td><td>55</td><td>2</td><td>Moderately well drained</td><td>Frequent</td><td>None</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27501588</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Morganlake loamy sand, 0 to 6 percent slopes</td><td>6712B</td><td>1444479</td><td>Morganlake</td><td></td><td>85</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501949</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Morganlake loamy sand, 6 to 15 percent slopes</td><td>6712C</td><td>1444480</td><td>Morganlake</td><td></td><td>85</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501953</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Neconish loamy fine sand, 0 to 3 percent slopes</td><td>6639A</td><td>1444463</td><td>Neconish</td><td></td><td>80</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501958</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Odanah silt loam, 15 to 25 percent slopes</td><td>6280E</td><td>1444396</td><td>Odanah</td><td></td><td>93</td><td>20</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501962</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Odanah silt loam, 25 to 60 percent slopes</td><td>6280F</td><td>1444397</td><td>Odanah</td><td></td><td>95</td><td>43</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501965</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Odanah silt loam, 6 to 15 percent slopes</td><td>6280C</td><td>1444395</td><td>Odanah</td><td></td><td>90</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501969</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Odanah-Cornucopia complex, 2 to 6 percent slopes</td><td>6454B</td><td>1702604</td><td>Odanah</td><td></td><td>55</td><td>4</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501974</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus sandy loam, 0 to 6 percent slopes</td><td>3182B</td><td>1444373</td><td>Padus</td><td></td><td>80</td><td>3</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501980</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus sandy loam, 15 to 35 percent slopes</td><td>3182E</td><td>1444375</td><td>Padus</td><td></td><td>82</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501986</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus sandy loam, 6 to 15 percent slopes</td><td>3182C</td><td>1444374</td><td>Padus</td><td></td><td>83</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501991</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus-Karlin complex, 0 to 6 percent slopes</td><td>9113B</td><td>1444560</td><td>Padus</td><td></td><td>50</td><td>3</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501504</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus-Karlin complex, 15 to 30 percent slopes</td><td>9113E</td><td>1444562</td><td>Padus</td><td></td><td>45</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501994</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus-Karlin complex, 6 to 15 percent slopes</td><td>9113C</td><td>1444561</td><td>Padus</td><td></td><td>45</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501507</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus-Pence sandy loams, 15 to 35 percent slopes</td><td>3852E</td><td>1601898</td><td>Padus</td><td></td><td>45</td><td>20</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501997</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus-Pence sandy loams, 6 to 15 percent slopes</td><td>3852C</td><td>1601899</td><td>Padus</td><td></td><td>45</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502001</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padus-Pence-Keweenaw complex, 15 to 30 percent slopes, stony</td><td>3582E</td><td>1703709</td><td>Padus</td><td></td><td>40</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502010</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Padwood sandy loam, 0 to 6 percent slopes</td><td>3527B</td><td>1542702</td><td>Padwood</td><td></td><td>90</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502014</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Peeksville fine sandy loam, 0 to 4 percent slopes, very stony</td><td>3744B</td><td>1444485</td><td>Peeksville</td><td></td><td>90</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502017</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pelissier gravelly sandy loam, 15 to 45 percent slopes</td><td>3571F</td><td>1444443</td><td>Pelissier</td><td></td><td>80</td><td>30</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502020</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pelissier gravelly sandy loam, 6 to 15 percent slopes</td><td>3571C</td><td>1601897</td><td>Pelissier</td><td>very gravelly substratum</td><td>80</td><td>11</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502023</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pelkie, occasionally flooded-Dechamps, frequently flooded complex, 0 to 4 percent slopes</td><td>6388B</td><td>1444413</td><td>Pelkie</td><td></td><td>50</td><td>2</td><td>Moderately well drained</td><td>Frequent</td><td>Occasional</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502027</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pence sandy loam, 0 to 6 percent slopes</td><td>3215B</td><td>1444383</td><td>Pence</td><td></td><td>85</td><td>3</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502031</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pence sandy loam, 15 to 35 percent slopes</td><td>3215E</td><td>1444385</td><td>Pence</td><td></td><td>83</td><td>23</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502036</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pence sandy loam, 6 to 15 percent slopes</td><td>3215C</td><td>1444384</td><td>Pence</td><td></td><td>83</td><td>11</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502038</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pence-Gogebic complex, 18 to 35 percent slopes, stony</td><td>5519E</td><td>1702878</td><td>Pence</td><td></td><td>60</td><td>27</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502045</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pence-Gogebic complex, 2 to 6 percent slopes, stony</td><td>5519B</td><td>1702874</td><td>Pence</td><td></td><td>60</td><td>3</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501577</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pence-Gogebic complex, 6 to 18 percent slopes, stony</td><td>5519D</td><td>1702876</td><td>Pence</td><td></td><td>60</td><td>12</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502049</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pickford-Badriver complex, 0 to 3 percent slopes</td><td>6548A</td><td>1444441</td><td>Pickford</td><td></td><td>50</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27502053</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pickford-Oronto complex, 0 to 3 percent slopes</td><td>6549A</td><td>1444584</td><td>Pickford</td><td></td><td>60</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27502056</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Pits</td><td>P</td><td>1444530</td><td>Pits</td><td></td><td>100</td><td></td><td></td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502058</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Portwing-Herbster complex, 0 to 6 percent slopes</td><td>6480B</td><td>1444426</td><td>Portwing</td><td></td><td>50</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502066</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Redrim very cobbly sand, 0 to 6 percent slopes, very stony</td><td>6603B</td><td>1444457</td><td>Redrim</td><td></td><td>85</td><td>3</td><td>Excessively drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>1.51</td><td>Nonhydric</td><td>27502071</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Rifle peat, 0 to 1 percent slopes</td><td>6023A</td><td>1700373</td><td>Rifle</td><td></td><td>90</td><td>0</td><td>Very poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Hydric</td><td>27502074</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Robago fine sandy loam, 0 to 3 percent slopes</td><td>3675A</td><td>1444474</td><td>Robago</td><td></td><td>90</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502077</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Robago fine sandy loam, lake terrace, 0 to 3 percent slopes</td><td>6375A</td><td>1444409</td><td>Robago</td><td></td><td>85</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502081</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Rock outcrop-Ishpeming complex, 0 to 15 percent slopes</td><td>6925C</td><td>1611073</td><td>Rock outcrop</td><td></td><td>50</td><td></td><td></td><td></td><td></td><td>No Data</td><td></td><td>Nonhydric</td><td>27502084</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Rousseau loamy fine sand, 0 to 6 percent slopes</td><td>6339B</td><td>1444403</td><td>Rousseau</td><td></td><td>85</td><td>3</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502088</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Rousseau loamy fine sand, 15 to 30 percent slopes</td><td>6339E</td><td>1444405</td><td>Rousseau</td><td></td><td>90</td><td>23</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502091</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Rousseau loamy fine sand, 6 to 15 percent slopes</td><td>6339C</td><td>1444404</td><td>Rousseau</td><td></td><td>90</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502094</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Rubicon-Sayner complex, 6 to 15 percent slopes</td><td>6475C</td><td>1703613</td><td>Rubicon</td><td></td><td>50</td><td>11</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502097</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sanborg-Badriver complex, 0 to 6 percent slopes</td><td>6580B</td><td>1444449</td><td>Sanborg</td><td></td><td>50</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502105</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sanborg-Odanah complex, 2 to 6 percent slopes</td><td>6680B</td><td>1444521</td><td>Sanborg</td><td></td><td>50</td><td>3</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502108</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Saprists, Aquents, and Aquepts soils, ponded, 0 to 1 percent slopes, frequently flooded</td><td>2114A</td><td>1444566</td><td>Saprists</td><td></td><td>55</td><td>0</td><td>Very poorly drained</td><td>Frequent</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27502112</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sayner-Lindquist complex, 0 to 6 percent slopes</td><td>9012B</td><td>1444551</td><td>Sayner</td><td></td><td>60</td><td>3</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501619</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sayner-Lindquist complex, 15 to 30 percent slopes</td><td>9012E</td><td>1444553</td><td>Sayner</td><td></td><td>60</td><td>23</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502120</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sayner-Lindquist complex, 6 to 15 percent slopes</td><td>9012C</td><td>1444552</td><td>Sayner</td><td></td><td>60</td><td>11</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501613</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sayner-Pence-Vilas complex, 0 to 6 percent slopes</td><td>3974B</td><td>1444517</td><td>Sayner</td><td></td><td>40</td><td>3</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502124</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sayner-Pence-Vilas complex, 15 to 30 percent slopes</td><td>3974E</td><td>1444519</td><td>Sayner</td><td></td><td>40</td><td>23</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502127</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sayner-Pence-Vilas complex, 6 to 15 percent slopes</td><td>3974C</td><td>1444518</td><td>Sayner</td><td></td><td>40</td><td>11</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502132</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sedgwick-Munuscong complex, 0 to 6 percent slopes</td><td>6753B</td><td>1444486</td><td>Sedgwick</td><td></td><td>50</td><td>3</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27502139</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden fine sandy loam, 15 to 30 percent slopes, very stony</td><td>3644E</td><td>1702818</td><td>Shanagolden</td><td></td><td>90</td><td>23</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502142</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden fine sandy loam, 2 to 6 percent slopes, very stony</td><td>3644B</td><td>1444464</td><td>Shanagolden</td><td>moderately deep densic layer</td><td>85</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502145</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden fine sandy loam, 6 to 15 percent slopes, very stony</td><td>3644C</td><td>1444465</td><td>Shanagolden</td><td></td><td>90</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502148</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden-Peeksville-Cable complex, 0 to 15 percent slopes, very stony</td><td>3633C</td><td>1702823</td><td>Shanagolden</td><td></td><td>40</td><td>9</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27502152</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden-Peeksville-Cable complex, 0 to 6 percent slopes, very stony</td><td>3633B</td><td>1607345</td><td>Shanagolden</td><td>moderately deep densic layer</td><td>40</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Partially Hydric</td><td>27502156</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden-Pence complex, 15 to 30 percent slopes, stony</td><td>3770E</td><td>1611076</td><td>Shanagolden</td><td></td><td>55</td><td>23</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502160</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden-Pence complex, 2 to 6 percent slopes, stony</td><td>3770B</td><td>1611074</td><td>Shanagolden</td><td></td><td>55</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502165</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Shanagolden-Pence complex, 6 to 15 percent slopes, stony</td><td>3770C</td><td>1611075</td><td>Shanagolden</td><td></td><td>55</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502169</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Spear silt loam, lake terrace, 0 to 3 percent slopes</td><td>3243A</td><td>1700371</td><td>Spear</td><td></td><td>85</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27501521</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Spiderlake silt loam, 0 to 3 percent slopes, stony</td><td>3830A</td><td>1444495</td><td>Spiderlake</td><td></td><td>85</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502172</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Springstead sandy loam, 1 to 6 percent slopes, stony</td><td>3384B</td><td>1444411</td><td>Springstead</td><td></td><td>88</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502177</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sultz sand, 0 to 6 percent slopes</td><td>6674B</td><td>1444470</td><td>Sultz</td><td></td><td>85</td><td>3</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502181</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sultz sand, 15 to 45 percent slopes</td><td>6674F</td><td>1444473</td><td>Sultz</td><td></td><td>90</td><td>30</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502184</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sultz sand, 6 to 15 percent slopes</td><td>6674C</td><td>1444471</td><td>Sultz</td><td></td><td>90</td><td>11</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502187</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Sultz-Ashwabay-Rubicon complex, 15 to 45 percent slopes</td><td>6805F</td><td>1444489</td><td>Sultz</td><td></td><td>35</td><td>30</td><td>Well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502192</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Superior-Sedgwick complex, 0 to 6 percent slopes</td><td>6756B</td><td>1444487</td><td>Superior</td><td></td><td>50</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502198</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Superior-Sedgwick complex, 6 to 15 percent slopes</td><td>6756C</td><td>1444488</td><td>Superior</td><td></td><td>50</td><td>11</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502204</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Tipler sandy loam, 0 to 4 percent slopes</td><td>3683B</td><td>1444476</td><td>Tipler</td><td></td><td>90</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502216</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Tipler-Manitowish complex, 0 to 3 percent slopes</td><td>9013A</td><td>1444554</td><td>Tipler</td><td></td><td>40</td><td>2</td><td>Moderately well drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27501493</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Tonkey sandy loam, 0 to 2 percent slopes</td><td>6319A</td><td>1444402</td><td>Tonkey</td><td></td><td>90</td><td>1</td><td>Poorly drained</td><td>None</td><td>Frequent</td><td>No Data</td><td></td><td>Predominantly Hydric</td><td>27502208</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Torch silt loam, 0 to 4 percent slopes, very stony</td><td>3638B</td><td>1444592</td><td>Torch</td><td>very stony</td><td>75</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502209</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Tula fine sandy loam, 0 to 4 percent slopes, stony</td><td>5376B</td><td>1444410</td><td>Tula</td><td>stony</td><td>85</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.30</td><td>Predominantly Nonhydric</td><td>27502219</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Tula-Gogebic complex, 0 to 6 percent slopes, stony</td><td>5353B</td><td>1702860</td><td>Tula</td><td>stony</td><td>45</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.30</td><td>Predominantly Nonhydric</td><td>27501605</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Tula-Wormet-Gogebic complex, 0 to 6 percent slopes, very stony</td><td>5171B</td><td>1702851</td><td>Tula</td><td></td><td>60</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>Fragipan</td><td>2.33</td><td>Predominantly Nonhydric</td><td>27501551</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Udorthents and Udipsamments, cut or fill</td><td>2030A</td><td>1444531</td><td>Udorthents</td><td>cut or fill</td><td>55</td><td>1</td><td>Somewhat excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502221</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Udorthents, ravines and escarpments, 25 to 60 percent slopes</td><td>2092F</td><td>1444367</td><td>Udorthents</td><td>ravines and escarpments</td><td>85</td><td>43</td><td></td><td></td><td></td><td>No Data</td><td></td><td>Nonhydric</td><td>27502225</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Vilas loamy sand, 0 to 6 percent slopes</td><td>3374B</td><td>1444363</td><td>Vilas</td><td></td><td>83</td><td>3</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502226</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Vilas loamy sand, 6 to 15 percent slopes</td><td>3374C</td><td>1444364</td><td>Vilas</td><td></td><td>90</td><td>10</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502231</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Vilas-Lindquist complex, 0 to 6 percent slopes</td><td>3594B</td><td>1444454</td><td>Vilas</td><td></td><td>50</td><td>3</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502239</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Vilas-Lindquist complex, 15 to 30 percent slopes</td><td>3594E</td><td>1444456</td><td>Vilas</td><td></td><td>50</td><td>23</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502242</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Vilas-Lindquist complex, 6 to 15 percent slopes</td><td>3594C</td><td>1444455</td><td>Vilas</td><td></td><td>50</td><td>11</td><td>Excessively drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Nonhydric</td><td>27502244</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Wakefield fine sandy loam, 1 to 6 percent slopes, stony</td><td>6203B</td><td>1444378</td><td>Wakefield</td><td></td><td>85</td><td>4</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.51</td><td>Nonhydric</td><td>27502248</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Wakefield fine sandy loam, 6 to 18 percent slopes, stony</td><td>6203D</td><td>1444379</td><td>Wakefield</td><td></td><td>85</td><td>12</td><td>Moderately well drained</td><td>None</td><td>None</td><td>Fragipan</td><td>1.51</td><td>Nonhydric</td><td>27502298</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Water</td><td>W</td><td>1444565</td><td>Water</td><td></td><td>100</td><td></td><td></td><td></td><td></td><td>No Data</td><td></td><td>Nonhydric</td><td>27501516</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Whisklake silt loam, 0 to 3 percent slopes</td><td>3701A</td><td>1542705</td><td>Whisklake</td><td></td><td>80</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502251</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Worcester sandy loam, 0 to 4 percent slopes</td><td>3192B</td><td>1444376</td><td>Worcester</td><td></td><td>85</td><td>1</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502262</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Wormet sandy loam, 0 to 3 percent slopes</td><td>3815A</td><td>1444493</td><td>Wormet</td><td></td><td>80</td><td>1</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502256</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Worwood sandy loam, 0 to 3 percent slopes</td><td>3560A</td><td>1542704</td><td>Worwood</td><td></td><td>88</td><td>2</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>No Data</td><td></td><td>Predominantly Nonhydric</td><td>27502266</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Wurtsmith sand, beaches, 0 to 3 percent slopes</td><td>6598A</td><td>1444586</td><td>Wurtsmith</td><td>beaches</td><td>90</td><td>2</td><td>Moderately well drained</td><td>None</td><td></td><td>No Data</td><td></td><td>Nonhydric</td><td>27502269</td></tr><tr><td>WI003</td><td>Ashland County, Wisconsin</td><td>Zeba sandy loam, 0 to 6 percent slopes, very stony</td><td>6610B</td><td>1444459</td><td>Zeba</td><td></td><td>90</td><td>3</td><td>Somewhat poorly drained</td><td>None</td><td>None</td><td>Lithic bedrock</td><td>2.76</td><td>Nonhydric</td><td>27502272</td></tr></tbody></table></div>
+      <div id="tableContainer" class="table-wrapper"></div>
     </div>
-
-    <div class="section">
+      <div class="section">
       <h2 style="color:#003f87;margin:.2rem 0 .6rem;">Definitions</h2>
-      <ul>
-        <li><strong>areasymbol</strong> — Soil Survey Area symbol.</li>
-        <li><strong>areaname</strong> — Soil Survey Area name.</li>
-        <li><strong>mukey</strong> — Map Unit key.</li>
-        <li><strong>musym</strong> — Map Unit symbol.</li>
-        <li><strong>muname</strong> — Map Unit name.</li>
-        <li><strong>compname</strong> / <strong>localphase</strong> — Component name and local phase.</li>
-        <li><strong>comppct_r</strong> — Component RV % (dominant component shown).</li>
-        <li><strong>slope_r</strong> — Representative slope (%).</li>
-        <li><strong>drainagecl</strong> — Drainage class.</li>
-        <li><strong>flodfreq</strong> / <strong>pondfreq</strong> — Most limiting flooding/ponding class (domain sequence).</li>
-        <li><strong>first_restriction_kind</strong> — Shallowest restrictive layer kind.</li>
-        <li><strong>rv_first_restriction_depth</strong> — Depth to first restriction (RV).</li>
-        <li><strong>hydric_rating</strong> — Derived hydric classification from component hydric flags.</li>
-        <li><strong>cokey</strong> — Component key (reference).</li>
+     <ul>
+  <li><strong>Area Symbol</strong> — A symbol that uniquely identifies a single occurrence of a particular type of soil survey area (e.g., "WI025").</li>
+  <li><strong>Area Name</strong> — The name given to a specific Soil Survey Area.</li>
+  <li><strong>Map Unit Name</strong> — The correlated name of a map unit, which typically includes the names of the major soil components and often a slope range (e.g., "Antigo silt loam, 0 to 2 percent slopes").</li>
+  <li><strong>MUKEY</strong> — A non-connotative string of characters used as a unique persistent identifier (primary key) for a record in the mapunit table.</li>
+  <li><strong>MUYSM</strong> — The symbol used to uniquely identify a soil map unit within a specific soil survey (e.g., "C49A").</li>
+  
+        <li><strong>Slope Class Rating / localphase</strong> — localphase is a criterion used locally with the component name to identify specific soil components. Categorizes suitability based on slope_r: &lt;12% is <strong><i>Suitable</i></strong>, 12–30% is <strong><i>'Limited'</i></strong>, and &gt;=30% is <strong><i>Not Suitable</i></strong>.</li>
+
+        <li><strong>Drainage Class Rating</strong> — Identifies natural drainage conditions and refers to the frequency and duration of wet periods. Categorizes suitability based on drainagecl: 'Well', 'Somewhat excessively', or 'Excessively drained' are <strong><i>Suitable</i></strong>; 'Somewhat poorly' or 'Moderately well' are <strong><i>'Limited'</i></strong>; and 'Poorly' or 'Very poorly' are <strong><i>Not Suitable</i></strong>.</li>
+
+        <li><strong>Flooding Class Rating</strong> — Identifies the annual probability of a flood event. Categorizes suitability based on flodfreq: 'None' is <strong><i>Suitable</i></strong>, 'Occasional' or 'Rare' is <strong><i>'Limited'</i></strong>, and 'Very Frequent' or 'Frequent' is <strong><i>Not Suitable</i></strong>.</li>
+
+        <li><strong>Ponding Class Rating</strong> — Standing water in a closed depression that is removed only by percolation, transpiration, or evaporation. Categorizes suitability based on pondfreq: 'None' is <strong><i>Suitable</i></strong>, 'Occasional' or 'Rare' is <strong><i>'Limited'</i></strong>, and 'Very Frequent' or 'Frequent' is <strong><i>Not Suitable</i></strong>.</li>
+
+        <li><strong>Restriction Kind / pondfreq</strong> — Describes the type of nearly continuous root-limiting soil restriction, such as "Lithic bedrock" or "Fragipan". Selects the first_restriction_kind for the dominant component to identify the primary physical limitation.</li>
+
+        <li><strong>Restriction Depth Class Rating</strong> — The representative depth from the soil surface to the upper boundary of a restrictive layer. Categorizes suitability based on rv_first_restriction_depth: &gt;=150cm is <strong><i>Suitable</i></strong>, 50–150cm is <strong><i>'Limited'</i></strong>, and &lt;50cm is <strong><i>Not Suitable</i></strong>.</li>
+
+        <li><strong>Hydric Class Rating</strong> — Proportion of the map unit that is hydric based on component flags. Derives a descriptive status ('Hydric', 'Nonhydric', 'Predominantly Hydric', 'Predominantly Nonhydric', or 'Partially Hydric') by comparing hydric component counts against the total map unit composition.</li>
+
+        <li><strong>WI FSG ID</strong> — The Forage Suitability Group ID identifies soil components with similar potential and limitations for forage production. Aggregates ecological class IDs using dominant component logic, specifically filtered for Wisconsin ecological classes.</li>  
+        
+        <li><strong>Not Suitable</strong> — This category applies to soils with one or more properties so <strong>unfavorable or difficult to overcome</strong> that the soil is generally considered unsatisfactory for the intended use [1]. The limitations (such as extreme slopes or very shallow restrictive layers) typically make the specified use impractical or cost-prohibitive.</li>
+        <li><strong>Limited</strong> — This designation identifies soils that possess one or more properties that are <strong>moderately unfavorable</strong> for a specified use [1]. These constraints are significant enough to require special planning, custom design, or increased maintenance to ensure the soil performs as intended within the assessment criteria.</li>
+        <li><strong>Suitable</strong> — This classification indicates that the soil has properties that are <strong>favorable or easily managed</strong> for a specific use [1]. Soils in this category generally do not require special conservation practices or design considerations to mitigate limitations for the intended use.</li>
+        <li><strong>Not Rated</strong> — This is a neutral designation indicating that a soil component <strong>cannot be evaluated</strong> for a specific interpretation [3]. This typically occurs due to <strong>insufficient data</strong> in the database or because the soil component is not applicable to the specific land use criteria being assessed.</li>
+        <li><strong>Null or No Data</strong> — This represents a state where <strong>no value exists</strong> in the database. It indicates that the underlying soil properties required to generate a rating or class were completely unpopulated in the source data, preventing any calculation or categorization from being attempted.</li>
       </ul>
     </div>
   </div>
@@ -159,91 +209,38 @@
     // ============ Utilities ============
     const SDA_URL = "https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest";
 
-    function $(sel) { return document.querySelector(sel); }
-    function $all(sel) { return Array.from(document.querySelectorAll(sel)); }
+    const $ = sel => document.querySelector(sel);
 
     function showMessage(html, type = "info") {
       $("#messages").innerHTML = `<div class="${type}">${html}</div>`;
     }
     function clearMessage() { $("#messages").innerHTML = ""; }
 
-    function toCSV(tableEl) {
-      const rows = [];
-      const trsHead = tableEl.tHead ? tableEl.tHead.rows : [];
-      const trsBody = tableEl.tBodies[0] ? tableEl.tBodies[0].rows : [];
-
-      function esc(val) {
-        const s = (val ?? "").toString();
-        const needsQuotes = /[",\n]/.test(s);
-        const escaped = s.replace(/"/g, '""');
-        return needsQuotes ? `"${escaped}"` : escaped;
-      }
-
-      // headers
-      if (trsHead.length > 0) {
-        const hdr = Array.from(trsHead[0].cells).map(td => esc(td.textContent));
-        rows.push(hdr.join(","));
-      }
-      // body
-      for (const tr of trsBody) {
-        const cols = Array.from(tr.cells).map(td => esc(td.textContent));
-        rows.push(cols.join(","));
-      }
-      return rows.join("\n");
-    }
-
-    function downloadBlob(content, filename, mime) {
-      const blob = new Blob([content], { type: mime });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    // ============ Data Loading ============
     async function sdaPost(query, format) {
-      // SDA expects application/x-www-form-urlencoded
       const body = new URLSearchParams({ query, format }).toString();
       const res = await fetch(SDA_URL, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body
       });
-      if (!res.ok) throw new Error(`SDA HTTP ${res.status}`);
-      const json = await res.json();
-      return json;
+      if (!res.ok) {
+        const text = await res.text();           // capture server text for diagnostics
+        throw new Error(`SDA HTTP ${res.status} — ${text}`);
+      }
+      return await res.json();
     }
 
-    function hasHeaderRow(table) {
-      if (!Array.isArray(table) || table.length === 0) return false;
-      const r0 = table[0];
-      if (!Array.isArray(r0)) return false;
-      const c0 = String(r0[0] ?? "").toLowerCase();
-      const c1 = String(r0[1] ?? "").toLowerCase();
-      return c0 === "areaname" || c1 === "areasymbol";
-    }
-
-    // ============ SSA Dropdown ============
+    // ============ Dynamic SSA dropdown ============
     async function loadSSAs() {
-      const query =
-        "SELECT DISTINCT c.areaname, c.areasymbol, c.areasymbol AS stateid " +
-        "FROM [dbo].[sastatusmap] c, [dbo].[saspatialver] s " +
-        "WHERE s.areasymbol = c.areasymbol " +
-        "AND c.areasymbol IN ( " +
-        "  SELECT DISTINCT l.areasymbol " +
-        "  FROM [dbo].[legend] l, [dbo].[laoverlap] o " +
-        "  WHERE o.lkey = l.lkey " +
-        "  AND o.areatypename = 'State or Territory' " +
-        "  AND o.areasymbol = 'WI' " +
-        ") ORDER BY c.areaname, c.areasymbol;";
-
+      const query = `
+        SELECT areaname, areasymbol
+        FROM sacatalog
+        WHERE areasymbol LIKE 'WI%'
+        ORDER BY areaname, areasymbol;
+      `;
       showMessage("Loading SSA list…", "info");
       try {
-        const data = await sdaPost(query, "json");
+        const data = await sdaPost(query, "json");           // pure data rows
         const table = Array.isArray(data.Table) ? data.Table : [];
         const sel = $("#ssa");
         sel.innerHTML = '<option value="" style="display:none">(select a Soil Survey Area)</option>';
@@ -252,11 +249,9 @@
           showMessage("No Wisconsin SSAs found.", "error");
           return;
         }
-
-        const start = hasHeaderRow(table) ? 1 : 0;
-        for (let i = start; i < table.length; i++) {
-          const areaname = table[i][0];
-          const areasymbol = table[i][1];
+        for (const row of table) {
+          const areaname   = row[0];
+          const areasymbol = row[1];
           const opt = document.createElement("option");
           opt.value = areasymbol;
           opt.textContent = areaname;
@@ -269,125 +264,151 @@
       }
     }
 
-    // ============ Report Query ============
+    // ============ YOUR QUERY (macro preserved; typos/entities fixed) ============
     function buildReportQuery(areasymbol) {
-      return `
-        DROP TABLE IF EXISTS #main_query;
+      return String.raw`
+-- SDA macro:
+~DeclareINT(@major)~
+SELECT @major = 0; -- Enter 0 for major component, enter 1 for all components
 
-        SELECT 
-            l.areasymbol, l.areaname,
-            m.muname, m.musym, m.mukey,
-            x.compname, x.localphase, x.comppct_r,
-            x.slope_r, x.drainagecl,
+DROP TABLE IF EXISTS #main_query;
 
-            (SELECT TOP 1 comonth.flodfreqcl
-             FROM comonth
-             JOIN MetadataDomainDetail dd
-               ON comonth.flodfreqcl = dd.ChoiceLabel
-             JOIN MetadataDomainMaster dm
-               ON dd.DomainID = dm.DomainID
-             WHERE comonth.cokey = x.cokey
-               AND dm.DomainName = 'flooding_frequency_class'
-             ORDER BY dd.ChoiceSequence DESC) AS flodfreq,
+SELECT 
+    l.areasymbol, l.areaname,
+    m.muname, m.musym, m.mukey,
+    x.slope_r, x.drainagecl,
+    
+    (SELECT TOP 1 comonth.flodfreqcl
+     FROM comonth
+     JOIN MetadataDomainDetail dd ON comonth.flodfreqcl = dd.ChoiceLabel
+     JOIN MetadataDomainMaster dm ON dd.DomainID = dm.DomainID
+     WHERE comonth.cokey = x.cokey AND dm.DomainName = 'flooding_frequency_class'
+     ORDER BY dd.ChoiceSequence DESC) AS flodfreq,
+     
+    (SELECT TOP 1 comonth.pondfreqcl
+     FROM comonth
+     JOIN MetadataDomainDetail dd ON comonth.pondfreqcl = dd.ChoiceLabel
+     JOIN MetadataDomainMaster dm ON dd.DomainID = dm.DomainID
+     WHERE comonth.cokey = x.cokey AND dm.DomainName = 'ponding_frequency_class'
+     ORDER BY dd.ChoiceSequence DESC) AS pondfreq,
+     
+    ISNULL((
+     SELECT TOP 1 reskind
+     FROM component AS c4
+     INNER JOIN corestrictions ON corestrictions.cokey = c4.cokey
+     WHERE c4.cokey = x.cokey AND reskind IN (
+         'Densic bedrock','Lithic bedrock','Paralithic bedrock',
+         'Cemented horizon','Duripan','Fragipan','Manufactured layer',
+         'Petrocalcic','Petroferric','Petrogypsic'
+     )
+     GROUP BY c4.cokey, reskind, resdept_r, corestrictkey
+     ORDER BY MIN(resdept_r) ASC, MIN(corestrictkey)
+    ), 'No Data') AS first_restriction_kind,
+    
+    CAST (ROUND ((
+     SELECT TOP 1 MIN (resdept_r) / 30.48
+     FROM component AS c3
+     INNER JOIN corestrictions ON corestrictions.cokey=c3.cokey
+     WHERE c3.cokey=x.cokey AND reskind IN ( 
+         'Densic bedrock','Lithic bedrock','Paralithic bedrock',
+         'Cemented horizon','Duripan','Fragipan','Manufactured layer',
+         'Petrocalcic','Petroferric','Petrogypsic'
+     ) 
+     GROUP BY c3.cokey, resdept_r
+    ), 2) AS decimal (5,2)) AS rv_first_restriction_depth,
+    
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey) AS comp_count,
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey AND c.majcompflag = 'Yes') AS count_maj_comp,
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey AND c.hydricrating = 'Yes') AS all_hydric,
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey AND c.majcompflag = 'Yes' AND c.hydricrating = 'Yes') AS maj_hydric,
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey AND c.majcompflag = 'Yes' AND c.hydricrating <> 'Yes') AS maj_not_hydric,
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey AND c.majcompflag <> 'Yes' AND c.hydricrating = 'Yes') AS hydric_inclusions,
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey AND c.hydricrating <> 'Yes') AS all_not_hydric,
+    (SELECT COUNT_BIG(*) FROM mapunit mu INNER JOIN component c ON c.mukey = mu.mukey WHERE mu.mukey = m.mukey AND c.hydricrating IS NULL) AS hydric_null,
+ 
+    (SELECT TOP 1 coecoclass.ecoclassname
+     FROM mapunit 
+     INNER JOIN component ON component.mukey=mapunit.mukey AND (CASE WHEN 1 = @major THEN 0 WHEN majcompflag = 'Yes' THEN 0 ELSE 1 END = 0)
+     INNER JOIN coecoclass ON component.cokey = coecoclass.cokey  
+     WHERE mapunit.mukey = m.mukey AND ecoclasstypename LIKE 'Forage Suitability Groups' 
+     GROUP BY coecoclass.ecoclassname 
+     ORDER BY SUM(comppct_r) DESC) AS dom_cond_FSG_class,
 
-            (SELECT TOP 1 comonth.pondfreqcl
-             FROM comonth
-             JOIN MetadataDomainDetail dd
-               ON comonth.pondfreqcl = dd.ChoiceLabel
-             JOIN MetadataDomainMaster dm
-               ON dd.DomainID = dm.DomainID
-             WHERE comonth.cokey = x.cokey
-               AND dm.DomainName = 'ponding_frequency_class'
-             ORDER BY dd.ChoiceSequence DESC) AS pondfreq,
+    (SELECT TOP 1 coecoclass.ecoclassid
+     FROM mapunit 
+     INNER JOIN component ON component.mukey=mapunit.mukey AND (CASE WHEN 1 = @major THEN 0 WHEN majcompflag = 'Yes' THEN 0 ELSE 1 END = 0)
+     INNER JOIN coecoclass ON component.cokey = coecoclass.cokey  
+     WHERE mapunit.mukey = m.mukey AND ecoclasstypename LIKE 'Forage Suitability Groups' 
+     GROUP BY coecoclass.ecoclassid 
+     ORDER BY SUM(comppct_r) DESC) AS dom_cond_FSG_id,
 
-            ISNULL((
-              SELECT TOP 1 reskind
-              FROM component AS c4
-              INNER JOIN corestrictions ON corestrictions.cokey = c4.cokey
-              WHERE c4.cokey = x.cokey
-                AND reskind IN (
-                  'Densic bedrock','Lithic bedrock','Paralithic bedrock',
-                  'Cemented horizon','Duripan','Fragipan','Manufactured layer',
-                  'Petrocalcic','Petroferric','Petrogypsic'
-                )
-              GROUP BY c4.cokey, reskind, resdept_r, corestrictkey
-              ORDER BY MIN(resdept_r) ASC, MIN(corestrictkey)
-            ), 'No Data') AS first_restriction_kind,
+    x.cokey
+INTO #main_query
+FROM dbo.legend AS l
+INNER JOIN dbo.mapunit AS m ON m.lkey = l.lkey AND l.areasymbol = '${areasymbol}'
+INNER JOIN (
+    SELECT c1.cokey, c1.mukey, c1.compname, c1.comppct_r, c1.localphase, c1.drainagecl, c1.slope_r,
+           ROW_NUMBER() OVER (PARTITION BY c1.mukey ORDER BY c1.comppct_r DESC, c1.cokey) AS rn
+    FROM component AS c1
+) AS x ON x.mukey = m.mukey AND x.rn = 1;
 
-				  CAST (ROUND ((SELECT TOP 1 MIN (resdept_r) /30.48
-			FROM component AS c3
-			INNER JOIN corestrictions ON corestrictions.cokey=c3.cokey
-			 AND c3.cokey=x.cokey and reskind IN  ( 'Densic bedrock',
-			'Lithic bedrock',
-			'Paralithic bedrock',
-			'Cemented horizon',
-			'Duripan',
-			'Fragipan',
-			'Manufactured layer',
-			'Petrocalcic',
-			'Petroferric',
-			'Petrogypsic') GROUP BY c3.cokey, resdept_r),2) AS decimal (3,2)) AS rv_first_restriction_depth,
+-- Final Select Statement
+SELECT
+    areasymbol AS [Area Symbol], 
+    areaname   AS [Area Name], 
+    muname     AS [Map Unit Name], 
+    musym      AS MUSYM, 
+    mukey      AS MUKEY,
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey) AS comp_count,
+    CASE
+      WHEN slope_r >= 30                THEN 'Not Suitable'
+      WHEN slope_r BETWEEN 12 AND 30    THEN 'Limited'
+      WHEN slope_r < 12                 THEN 'Suitable'
+      ELSE 'Not Rated'
+    END AS [Slope Class Rating], 
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey AND c.majcompflag = 'Yes') AS count_maj_comp,
+    CASE
+      WHEN drainagecl IN ('Poorly drained','Very poorly drained') THEN 'Not Suitable'
+      WHEN drainagecl IN ('Somewhat poorly drained','Moderately well drained') THEN 'Limited'
+      WHEN drainagecl IN ('Well drained','Somewhat excessively drained','Excessively drained') THEN 'Suitable'  -- comma fixed
+      ELSE 'Not Rated'
+    END AS [Drainage Class Rating],
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey AND c.hydricrating = 'Yes') AS all_hydric,
+    CASE
+      WHEN flodfreq IN ('Very Frequent','Frequent') THEN 'Not Suitable'
+      WHEN flodfreq IN ('Occasional','Rare')        THEN 'Limited'
+      WHEN flodfreq = 'None'                        THEN 'Suitable'
+      ELSE 'Not Rated'
+    END AS [Flooding Class Rating],
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey AND c.majcompflag = 'Yes' AND c.hydricrating = 'Yes') AS maj_hydric,
+    CASE
+      WHEN pondfreq IN ('Very Frequent','Frequent') THEN 'Not Suitable'
+      WHEN pondfreq IN ('Occasional','Rare')        THEN 'Limited'   -- IN fixed
+      WHEN pondfreq = 'None'                        THEN 'Suitable'
+      ELSE 'Not Rated'
+    END AS [Ponding Class Rating],
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey AND c.majcompflag = 'Yes' AND c.hydricrating <> 'Yes') AS maj_not_hydric,
+    first_restriction_kind AS [Restriction Kind],
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey AND c.majcompflag <> 'Yes' AND c.hydricrating = 'Yes') AS hydric_inclusions,
+    CASE
+      WHEN rv_first_restriction_depth < 50              THEN 'Not Suitable'
+      WHEN rv_first_restriction_depth BETWEEN 50 AND 150 THEN 'Limited'
+      WHEN rv_first_restriction_depth >= 150           THEN 'Suitable'
+      ELSE 'Not Rated'
+    END AS [Restriction Depth Class Rating],
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey AND c.hydricrating <> 'Yes') AS all_not_hydric,
+    CASE
+        WHEN comp_count = all_not_hydric + hydric_null THEN 'Nonhydric'
+        WHEN comp_count = all_hydric                   THEN 'Hydric'
+        WHEN comp_count <> all_hydric AND count_maj_comp = maj_hydric THEN 'Predominantly Hydric'
+        WHEN hydric_inclusions >= 0.5 AND maj_hydric < 0.5             THEN 'Predominantly Nonhydric'
+        WHEN maj_not_hydric >= 0.5 AND maj_hydric >= 0.5               THEN 'Partially Hydric'
+        ELSE 'Error'
+    END AS [Hydric Class Rating],
 
-            (SELECT COUNT_BIG(*) FROM mapunit mu
-             INNER JOIN component c ON c.mukey = mu.mukey
-             WHERE mu.mukey = m.mukey AND c.hydricrating IS NULL) AS hydric_null,
-
-            x.cokey
-        INTO #main_query
-        FROM dbo.legend AS l
-        INNER JOIN dbo.mapunit AS m
-          ON m.lkey = l.lkey
-         AND l.areasymbol = '${areasymbol}'
-        INNER JOIN (
-          SELECT c1.cokey, c1.mukey, c1.compname, c1.comppct_r, c1.localphase, c1.drainagecl, c1.slope_r,
-                 ROW_NUMBER() OVER (PARTITION BY c1.mukey ORDER BY c1.comppct_r DESC, c1.cokey) AS rn
-          FROM component AS c1
-        ) AS x
-          ON x.mukey = m.mukey AND x.rn = 1;
-
-        SELECT
-          areasymbol, areaname, muname, musym, mukey,
-          compname, localphase, comppct_r, slope_r, drainagecl,
-          flodfreq, pondfreq, first_restriction_kind, rv_first_restriction_depth AS [rv_first_restriction_depth ft],
-          CASE
-            WHEN comp_count = all_not_hydric + hydric_null THEN 'Nonhydric'
-            WHEN comp_count = all_hydric THEN 'Hydric'
-            WHEN comp_count <> all_hydric AND count_maj_comp = maj_hydric THEN 'Predominantly Hydric'
-            WHEN hydric_inclusions >= 0.5 AND maj_hydric < 0.5 THEN 'Predominantly Nonhydric'
-            WHEN maj_not_hydric >= 0.5 AND maj_hydric >= 0.5 THEN 'Partially Hydric'
-            ELSE 'Error'
-          END AS hydric_rating,
-          cokey
-        FROM #main_query
-        ORDER BY muname ASC, musym, mukey, comppct_r DESC, compname;
+    dom_cond_FSG_id AS [WI FSG ID]
+FROM #main_query
+ORDER BY muname ASC, musym, mukey;
       `;
     }
 
@@ -400,7 +421,8 @@
       const trh = document.createElement("tr");
       headers.forEach((h, i) => {
         const th = document.createElement("th");
-        th.textContent = h;
+        th.textContent = h;                  // visible label (SQL alias)
+        th.setAttribute("data-colname", h);  // raw label for export
         const ind = document.createElement("span");
         ind.className = "sort-ind";
         th.appendChild(ind);
@@ -431,7 +453,6 @@
       const rows = Array.from(tbody.rows);
       const ths = table.tHead.rows[0].cells;
 
-      // Toggle direction if same column
       if (sortState.col === colIdx) {
         sortState.dir = -sortState.dir;
       } else {
@@ -439,7 +460,6 @@
         sortState.dir = 1;
       }
 
-      // Clear indicators
       Array.from(ths).forEach(th => th.querySelector(".sort-ind").textContent = "");
       ths[colIdx].querySelector(".sort-ind").textContent = sortState.dir === 1 ? "▲" : "▼";
 
@@ -449,7 +469,6 @@
 
         const aNum = parseFloat(av);
         const bNum = parseFloat(bv);
-        // numeric if both numeric, else string
         let cmp;
         if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
           cmp = aNum - bNum;
@@ -459,11 +478,42 @@
         return sortState.dir * cmp;
       });
 
-      // Re-append
       rows.forEach(r => tbody.appendChild(r));
     }
 
-    // ============ Export handlers ============
+    function toCSV(tableEl) {
+      const rows = [];
+      const trsHead = tableEl.tHead ? tableEl.tHead.rows : [];
+      const trsBody = tableEl.tBodies[0] ? tableEl.tBodies[0].rows : [];
+
+      function esc(val) {
+        const s = (val ?? "").toString();
+        const needsQuotes = /[",\n]/.test(s);
+        const escaped = s.replace(/"/g, '""');
+        return needsQuotes ? `"${escaped}"` : escaped;
+      }
+
+      if (trsHead.length > 0) {
+        const hdr = Array.from(trsHead[0].cells).map(th =>
+          esc(th.getAttribute("data-colname") || th.textContent.replace(/[▲▼]/g, ""))
+        );
+        rows.push(hdr.join(","));
+      }
+      for (const tr of trsBody) {
+        const cols = Array.from(tr.cells).map(td => esc(td.textContent));
+        rows.push(cols.join(","));
+      }
+      return rows.join("\n");
+    }
+
+    function downloadBlob(content, filename, mime) {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
     function enableExports(tableEl, filenameBase) {
       const btnCsv = $("#btnCsv");
       const btnXls = $("#btnXls");
@@ -475,10 +525,15 @@
         downloadBlob(csv, `${filenameBase}.csv`, "text/csv;charset=utf-8");
       };
 
-      // Simple Excel (XLS) via HTML table MIME (works in Excel)
       btnXls.onclick = () => {
-        const html =
-          `<html><head><meta charset="UTF-8"></head><body>${tableEl.outerHTML}</body></html>`;
+        const clone = tableEl.cloneNode(true);
+        if (clone.tHead && clone.tHead.rows.length > 0) {
+          Array.from(clone.tHead.rows[0].cells).forEach(th => {
+            const ind = th.querySelector(".sort-ind");
+            if (ind) ind.textContent = "";
+          });
+        }
+        const html = `<html><head><meta charset="UTF-8"></head><body>${clone.outerHTML}</body></html>`;
         downloadBlob(html, `${filenameBase}.xls`, "application/vnd.ms-excel");
       };
     }
@@ -491,10 +546,13 @@
       showMessage("Loading report…", "info");
 
       try {
-        const data = await sdaPost(buildReportQuery(areasymbol), "json+columnname");
+        const sql = buildReportQuery(areasymbol);
+        const data = await sdaPost(sql, "json+columnname");
         const table = Array.isArray(data.Table) ? data.Table : [];
         if (table.length === 0) {
           showMessage("No data available for this survey area.", "info");
+          $("#btnCsv").disabled = true;
+          $("#btnXls").disabled = true;
           return;
         }
 
@@ -503,27 +561,29 @@
         const tbl = renderTable(headers, rows);
         container.appendChild(tbl);
 
-        $("#rowCount").textContent = `${rows.length.toLocaleString()} rows`;
+        $("#rowCount").textContent = `${rows.length.toLocaleString()} Map Unit "rows" returned`;
         enableExports(tbl, `WI_Critical_Sensitive_Assessment_${areasymbol}`);
         clearMessage();
       } catch (err) {
         console.error(err);
         showMessage(`Error loading SDA report for ${areasymbol}: ${err.message}`, "error");
+        $("#btnCsv").disabled = true;
+        $("#btnXls").disabled = true;
       }
     }
 
     // ============ Init ============
     document.addEventListener("DOMContentLoaded", () => {
-      // Load SSAs
-      loadSSAs();
+      loadSSAs(); // dynamic list from SDA
 
-      // Dropdown change
       $("#ssa").addEventListener("change", (e) => {
         const areasymbol = e.target.value;
         if (!areasymbol) {
           $("#status").style.display = "none";
           $("#tableContainer").innerHTML = "";
           $("#rowCount").textContent = "";
+          $("#btnCsv").disabled = true;
+          $("#btnXls").disabled = true;
           return;
         }
         $("#status").textContent = `Selected: ${e.target.options[e.target.selectedIndex].text}`;
@@ -533,4 +593,5 @@
     });
   </script>
 
-</body></html>
+</body>
+</html>
