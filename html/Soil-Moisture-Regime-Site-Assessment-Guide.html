@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- agent-version: 2 -->
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soil Moisture Regime Site Assessment Guide</title>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --blue: #003f87; --blue2: #004d7a; --border: #e0e0e0;
+      --text: #222; --muted: #666; --bg: #f5f5f5;
+      --info-bg: #e8f0f7; --error-bg: #ffe8ec; --error: #b00020;
+    }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0; background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text); line-height: 1.45;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: #fff; padding: 1.5rem 2rem; box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
+    .header h1 { margin: 0 0 .3rem; font-size: 1.8rem; }
+    .header p { margin: 0; opacity: .95; }
+
+    .quick-links {
+      margin-top: .9rem;
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+    }
+
+    .quick-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.6);
+      border-radius: 999px;
+      padding: .4rem .8rem;
+      font-weight: 600;
+      transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
+    }
+
+    .quick-link:hover,
+    .quick-link:focus-visible {
+      background: rgba(255,255,255,.15);
+      border-color: #fff;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .container { max-width: 98vw; margin: 0 auto; padding: 1.5rem 2rem; }
+    .section {
+      background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      padding: 1rem 1.25rem; margin-bottom: 1rem; border: 1px solid var(--border);
+      border-top: 4px solid rgba(0, 63, 135, .18);
+      transition: box-shadow .2s ease, transform .2s ease;
+    }
+
+    .section:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,.12);
+      transform: translateY(-1px);
+    }
+
+    .section h2 {
+      color: #003f87;
+      margin: .2rem 0 .6rem;
+      letter-spacing: .2px;
+    }
+
+    .meta-nav {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin: .35rem 0 .8rem;
+    }
+
+    .chip-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--blue);
+      background: #eef4fb;
+      border: 1px solid #c8daef;
+      border-radius: 999px;
+      padding: .3rem .7rem;
+      font-size: .9rem;
+      font-weight: 600;
+      transition: background-color .2s ease, border-color .2s ease;
+    }
+
+    .chip-link:hover,
+    .chip-link:focus-visible {
+      background: #dfeefd;
+      border-color: #9fc0e4;
+      outline: none;
+    }
+
+    label { font-weight: 600; color: var(--blue); display: block; margin-bottom: .5rem; }
+    select {
+      width: 100%; max-width: 520px; padding: .6rem .7rem;
+      border: 2px solid #d0d0d0; border-radius: 6px; font-size: 1rem; background: #fff;
+    }
+
+    select:focus-visible,
+    .filter-input:focus-visible,
+    .btn:focus-visible {
+      outline: 2px solid #2a6fbb;
+      outline-offset: 2px;
+    }
+
+    .status-message {
+      display: none; margin-top: .8rem;
+      padding: .6rem .8rem; color: var(--blue); background: var(--info-bg);
+      border-left: 5px solid var(--blue); border-radius: 4px;
+    }
+
+    .toolbar {
+      display: flex; gap: .5rem; flex-wrap: wrap;
+      align-items: center; margin-bottom: .6rem;
+    }
+    .filter-input {
+      min-width: 260px;
+      max-width: 520px;
+      width: 100%;
+      padding: .45rem .6rem;
+      border: 1px solid #c9c9c9;
+      border-radius: 6px;
+      font-size: .95rem;
+      background: #fff;
+      color: var(--text);
+    }
+    .btn {
+      appearance: none; border: 1px solid #c9c9c9; background: #fff; color: var(--blue);
+      padding: .45rem .7rem; border-radius: 6px; cursor: pointer; font-weight: 600;
+    }
+    .btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+    /* Scroll container (vertical + horizontal). Supports sticky header. */
+    .table-wrapper {
+      max-height: 80vh;
+      overflow-y: auto;      /* vertical scroll */
+      overflow-x: auto;      /* horizontal scroll */
+      position: relative;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    /* --- CORRECTED SCRIPT --- */
+
+table { 
+    table-layout: fixed; 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: .98rem; 
+    /* REMOVED: min-width: 980px. This was forcing your table to be too wide. */
+}
+
+thead { 
+    background: var(--blue); 
+    color: #fff; 
+}
+
+th, td { 
+    overflow-wrap: break-word; 
+    padding: .6rem .7rem; 
+    border-bottom: 1px solid #e6e6e6; 
+}
+
+th { 
+    position: relative; 
+    /* REMOVED: white-space: nowrap. This prevented header text from wrapping. */
+    cursor: pointer; 
+}
+
+/* Table column sizing tuned to stay within bounds and favor Map Unit Name. */
+th:nth-child(1)  { width: 6%; }   /* mukey */
+th:nth-child(2)  { width: 6%; }   /* cokey */
+th:nth-child(3)  { width: 7%; }   /* Mapunit Symbol */
+th:nth-child(4)  { width: 18%; }  /* Mapunit Name */
+th:nth-child(5)  { width: 13%; }  /* Component Name */
+th:nth-child(6)  { width: 8%; }   /* Component Percent */
+th:nth-child(7)  { width: 8%; }   /* Depth to Wetness (cm) */
+th:nth-child(8)  { width: 9%; }   /* Available Water Storage (100 cm) */
+th:nth-child(9)  { width: 7%; }   /* Flooding (freq/dur) */
+th:nth-child(10) { width: 8%; }   /* taxsuborder */
+th:nth-child(11) { width: 10%; }  /* Soil Moisture Site Condition */
+
+
+th .sort-ind { 
+    position: absolute; 
+    right: .6rem; 
+    opacity: .85; 
+    font-size: .85rem; 
+}
+
+tbody tr:nth-child(odd) {
+    /* REMOVED: width property from here. It does not work on table rows. */
+    background-color: #f8fbff; 
+}
+
+tbody tr:nth-child(even) { 
+    /* REMOVED: width property from here. It does not work on table rows. */
+    background-color: #ffffff; 
+}
+
+    /* Sticky header cells */
+    table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #003f87;  /* match the thead color */
+      color: #fff;
+    }
+
+    .error { color: var(--error); background: var(--error-bg); border-left: 5px solid var(--error);
+      padding: .6rem .8rem; border-radius: 4px; margin-bottom: .6rem; }
+    .info { color: var(--blue); background: var(--info-bg); border-left: 5px solid var(--blue);
+      padding: .6rem .8rem; border-radius: 4px; margin-bottom: .6rem; }
+    .muted { color: var(--muted); }
+
+    .definition-block p {
+      margin: .45rem 0;
+    }
+
+    .source-tag {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-left: .35rem;
+    }
+
+    .back-to-top {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 50;
+      border: 1px solid #c7d7ea;
+      background: #fff;
+      color: var(--blue);
+      border-radius: 999px;
+      padding: .5rem .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 5px 14px rgba(0,0,0,.15);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease, background-color .2s ease;
+    }
+
+    .back-to-top.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .back-to-top:hover,
+    .back-to-top:focus-visible {
+      background: #e9f2fb;
+      outline: none;
+    }
+
+    @media (max-width: 700px) {
+      .container { padding: 1rem; }
+      .header { padding: 1.2rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header" id="top">
+    <h1>Soil Moisture Regime Site Assessment Guide</h1>
+    <p>This report pulls data from the live NRCS database. Pick a soil survey area and the table loads right away. Use these values to choose seed mixes that match site moisture conditions. You can find species guidance in NRCS technical notes and standards in the Field Office Technical Guide (FOTG). Common standards that use this data include Critical Area Planting (342), Conservation Cover (327), and Forage &amp; Biomass Planting (512). See Report Metadata below for field details.</p>
+    <div class="quick-links">
+      <a class="quick-link" href="#metadata">Jump to Report Metadata</a>
+      <a class="quick-link" href="#reportSection">Go to Report Table</a>
+    </div>
+
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <label for="ssa">Select a Soil Survey Area:</label>
+      <select id="ssa">
+        <option value="" style="display:none">(select a Soil Survey Area)</option>
+        <!-- dynamic options will be loaded from SDA sacatalog -->
+      </select>
+      <div id="status" class="status-message"></div>
+    </div>
+
+    <div class="section" id="reportSection">
+      <div id="messages"></div>
+      <div class="toolbar">
+        <input id="tableFilter" class="filter-input" type="text" placeholder="Filter table rows" disabled>
+        <button class="btn" id="btnCsv" disabled>Export CSV</button>
+        <button class="btn" id="btnXls" disabled>Export Excel (XLS)</button>
+        <span id="rowCount" class="muted"></span>
+      </div>
+      <div id="tableContainer" class="table-wrapper"></div>
+    </div>
+      <div class="section" id="metadata">
+      <h2>Report Metadata</h2>
+      <div class="meta-nav">
+        <a class="chip-link" href="#top">Back to top</a>
+        <a class="chip-link" href="#reportSection">Back to report table</a>
+      </div>
+      <p id="metadataStatus" class="muted">Definitions load when report columns are loaded.</p>
+      <div id="columnDefinitions" class="definition-block"></div>
+    </div>
+  </div>
+
+  <button id="backToTopBtn" class="back-to-top" type="button" aria-label="Back to top">Top</button>
+
+  <script>
+    // ============ Utilities ============
+    const SDA_URL = "https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest";
+
+    const $ = sel => document.querySelector(sel);
+
+    function showMessage(html, type = "info") {
+      $("#messages").innerHTML = `<div class="${type}">${html}</div>`;
+    }
+    function clearMessage() { $("#messages").innerHTML = ""; }
+
+    const HEADER_METADATA_MAP = {
+      "mukey": { column: "mukey", preferredTable: "mapunit" },
+      "cokey": { column: "cokey", preferredTable: "component" },
+      "Mapunit Symbol": { column: "musym", preferredTable: "mapunit" },
+      "Mapunit Name": { column: "muname", preferredTable: "mapunit" },
+      "Component Name": { column: "compname", preferredTable: "component" },
+      "Component Percent": { column: "comppct_r", preferredTable: "component" },
+      "Depth to Wetness (cm)": { column: "soimoistdept_r", preferredTable: "cosoilmoist" },
+      "Available Water Storage (100 cm)": { column: "aws100wta", preferredTable: "muaggatt" },
+      "Flooding (freq/dur)": { column: "flodfreqcl", preferredTable: "comonth" },
+      "taxsuborder": { column: "taxsuborder", preferredTable: "component" }
+    };
+
+    const FALLBACK_DEFINITIONS = {
+      "mukey": "Unique text key for a map unit record.",
+      "cokey": "Unique text key for a component record.",
+      "Mapunit Symbol": "Short map symbol used to identify a soil map unit.",
+      "Mapunit Name": "Correlated name of the map unit.",
+      "Component Name": "Name of the soil component within the map unit.",
+      "Component Percent": "Estimated percent of the map unit represented by this component.",
+      "Depth to Wetness (cm)": "Shallowest depth where wet soil conditions are observed for the component.",
+      "Available Water Storage (100 cm)": "Estimated available water storage to 100 cm depth.",
+      "Flooding (freq/dur)": "Combined flooding score based on frequency and duration criteria.",
+      "taxsuborder": "Soil Taxonomy suborder for the component.",
+      "Soil Moisture Site Condition": "Final moisture class based on wetness depth, flooding behavior, taxonomy, and available water storage."
+    };
+
+    async function sdaPost(query, format) {
+      const body = new URLSearchParams({ query, format }).toString();
+      const res = await fetch(SDA_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body
+      });
+      if (!res.ok) {
+        const text = await res.text();           // capture server text for diagnostics
+        throw new Error(`SDA HTTP ${res.status}: ${text}`);
+      }
+      return await res.json();
+    }
+
+    function escHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function pickBestMetadataRow(rows, preferredTable) {
+      if (!Array.isArray(rows) || rows.length === 0) return null;
+      if (preferredTable) {
+        const exact = rows.find(r => String(r.table || "").toLowerCase() === preferredTable.toLowerCase());
+        if (exact) return exact;
+      }
+      const withDesc = rows.find(r => (r.description || "").trim().length > 0);
+      return withDesc || rows[0];
+    }
+
+    async function fetchColumnMetadataByHeaders(headers) {
+      const mappedColumns = Array.from(new Set(headers
+        .map(h => HEADER_METADATA_MAP[h])
+        .filter(Boolean)
+        .map(m => m.column)));
+
+      if (mappedColumns.length === 0) return {};
+
+      const list = mappedColumns.map(c => `'${c.replace(/'/g, "''")}'`).join(", ");
+      const query = `
+        SELECT
+          mt.TablePhysicalName,
+          mtc.ColumnPhysicalName,
+          mtc.ColumnLabel,
+          mtc.ColumnDescription
+        FROM MetadataTableColumn AS mtc
+        INNER JOIN MetadataTable AS mt ON mt.TableID = mtc.TableID
+        WHERE mtc.ColumnPhysicalName IN (${list})
+        ORDER BY mtc.ColumnPhysicalName, mt.TablePhysicalName;
+      `;
+
+      const data = await sdaPost(query, "json+columnname");
+      const table = Array.isArray(data.Table) ? data.Table : [];
+      const rows = table.slice(1).map(r => ({
+        table: r[0],
+        column: r[1],
+        label: r[2],
+        description: r[3]
+      }));
+
+      const grouped = {};
+      rows.forEach(r => {
+        const key = String(r.column || "").toLowerCase();
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(r);
+      });
+
+      return grouped;
+    }
+
+    async function updateMetadataDefinitions(headers) {
+      const status = $("#metadataStatus");
+      const container = $("#columnDefinitions");
+      status.textContent = "Loading metadata definitions from SDA...";
+      container.innerHTML = "";
+
+      let grouped = {};
+      try {
+        grouped = await fetchColumnMetadataByHeaders(headers);
+      } catch (err) {
+        console.error(err);
+      }
+
+      const definitions = headers.map(header => {
+        const mapCfg = HEADER_METADATA_MAP[header];
+        const apiRows = mapCfg ? grouped[String(mapCfg.column).toLowerCase()] : null;
+        const chosen = mapCfg ? pickBestMetadataRow(apiRows, mapCfg.preferredTable) : null;
+        const apiDescription = chosen && (chosen.description || "").trim();
+
+        if (apiDescription) {
+          return {
+            header,
+            text: apiDescription,
+            source: "SDA metadata"
+          };
+        }
+
+        return {
+          header,
+          text: FALLBACK_DEFINITIONS[header] || "Definition is not available from SDA metadata for this computed field.",
+          source: "Report logic"
+        };
+      });
+
+      container.innerHTML = definitions
+        .map(d => `<p><strong>${escHtml(d.header)}:</strong> ${escHtml(d.text)}<span class="source-tag">(${escHtml(d.source)})</span></p>`)
+        .join("");
+
+      const usedApi = definitions.some(d => d.source === "SDA metadata");
+      status.textContent = usedApi
+        ? "Definitions loaded from SDA metadata with report logic used for computed fields."
+        : "SDA metadata was not available for these columns. Report logic definitions are shown.";
+    }
+
+    // ============ Dynamic SSA dropdown ============
+    async function loadSSAs() {
+      const query = `
+        SELECT areaname, areasymbol
+        FROM sacatalog
+        WHERE areasymbol LIKE 'WI%'
+        ORDER BY areaname, areasymbol;
+      `;
+      showMessage("Loading SSA list...", "info");
+      try {
+        const data = await sdaPost(query, "json");           // pure data rows
+        const table = Array.isArray(data.Table) ? data.Table : [];
+        const sel = $("#ssa");
+        sel.innerHTML = '<option value="" style="display:none">(select a Soil Survey Area)</option>';
+
+        if (table.length === 0) {
+          showMessage("No Wisconsin SSAs found.", "error");
+          return;
+        }
+        for (const row of table) {
+          const areaname   = row[0];
+          const areasymbol = row[1];
+          const opt = document.createElement("option");
+          opt.value = areasymbol;
+          opt.textContent = areaname;
+          sel.appendChild(opt);
+        }
+        clearMessage();
+      } catch (err) {
+        console.error(err);
+        showMessage(`Error loading SSAs from SDA: ${err.message}`, "error");
+      }
+    }
+
+    // ============ YOUR QUERY (macro preserved; typos/entities fixed) ============
+    function buildReportQuery(areasymbol) {
+      return String.raw`
+~DeclareChar(@area,20)~  -- Used for Soil Data Access
+~DeclareINT(@area_type)~ 
+~DeclareINT(@major)~ 
+~DeclareChar(@operator,20)~ 
+
+-- End soil data access
+SELECT
+    @area = '${areasymbol}'; --Enter State Abbreviation or Soil Survey Area i.e. WI or  WI025,  US 
+
+SELECT
+    @major = 0; -- Enter 0 for major component, enter 1 for all components
+
+SELECT
+    @area_type = LEN(@area); --determines number of characters of area 2-State, 5- Soil Survey Area
+
+SELECT areasymbol, areaname, mapunit.mukey, mapunit.musym, nationalmusym, mapunit.muname, mukind, muacres, compname, comppct_r, component.cokey, taxorder, taxsuborder
+ 	INTO #main 
+       	FROM legend 
+ 	INNER JOIN mapunit on legend.lkey=mapunit.lkey    AND (CASE
+                                    WHEN @area_type = 2
+                                        THEN LEFT(areasymbol, 2)
+                                    ELSE
+                                        areasymbol
+                                END = @area) 
+							
+                               
+ 	INNER JOIN component ON component.mukey=mapunit.mukey AND (CASE
+                                    WHEN 1 = @major
+                                        THEN 0
+                                    WHEN majcompflag = 'Yes'
+                                        THEN 0
+                                    ELSE
+                                        1
+                                END = 0
+                               )
+ 	
+                           
+						
+ 	ORDER BY mapunit.muname ASC, mapunit.mukey,comppct_r DESC, compname 
+
+
+
+ 	SELECT muname, cwet.compname, #main.mukey, cwet.cokey, cwet.comppct_r,  (SELECT  TOP 1 (soimoistdept_r) 
+ 	FROM component AS cwet2 
+ 	INNER JOIN comonth ON comonth.cokey=cwet2.cokey AND cwet2.cokey=cwet.cokey 
+ 	INNER JOIN cosoilmoist on cosoilmoist.comonthkey=comonth.comonthkey AND soimoiststat = 'wet' ORDER BY soimoistdept_r ASC) AS MIN_Wet, 
+ 	(SELECT top 1 flodfreqcl from comonth, MetadataDomainMaster dm, MetadataDomainDetail dd where comonth.cokey = cwet.cokey and flodfreqcl = ChoiceLabel and DomainName = 'flooding_frequency_class' and 
+ 	dm.DomainID = dd.DomainID order by choicesequence desc) as annflodfreq, 
+ 	(SELECT top 1 floddurcl from comonth, MetadataDomainMaster dm, MetadataDomainDetail dd where comonth.cokey = cwet.cokey and floddurcl = ChoiceLabel and DomainName = 'flooding_duration_class' and 
+ 	dm.DomainID = dd.DomainID order by choicesequence desc) as annfloddur 
+ 	INTO #wet 
+ 	FROM #main 
+ 	INNER JOIN component AS cwet ON cwet.mukey=#main.mukey 
+ 	GROUP BY muname, #main.mukey, cwet.comppct_r, cwet.compname, cwet.cokey 
+ 	ORDER BY muname, #main.mukey, cwet.comppct_r DESC, cwet.compname, cwet.cokey 
+
+
+
+
+    SELECT  
+ 	LEFT((areasymbol), 2) AS state,  
+ 	mu.muname,  
+l.areasymbol, 
+l.areaname, 
+ 	(SELECT SUM (DISTINCT comppct_r) FROM mapunit  AS mui3  INNER JOIN component AS cint3 ON cint3.mukey=mui3.mukey INNER JOIN chorizon AS chint3 ON chint3.cokey=cint3.cokey AND cint3.cokey = c.cokey GROUP BY chint3.cokey) AS sum_comp,  
+mu.mukey,  
+mu.musym,  
+c.majcompflag,  
+c.comppct_r,  
+c.compname,  
+compkind,  
+localphase,  
+slope_l,  
+ 	slope_r,  
+slope_h,  
+ 	(SELECT CAST(MIN(resdept_r) AS INTEGER) FROM component LEFT OUTER JOIN corestrictions ON component.cokey = corestrictions.cokey WHERE component.cokey = c.cokey AND reskind  IS NOT NULL) AS restrictiondepth,  
+ 	(SELECT CASE WHEN MIN (resdept_r) IS NULL THEN 200 ELSE CAST (MIN (resdept_r) AS INT) END FROM component LEFT OUTER JOIN corestrictions ON component.cokey = corestrictions.cokey WHERE component.cokey = c.cokey AND reskind IS NOT NULL) AS restrictiodepth,  
+ 	(SELECT TOP 1  reskind  FROM component LEFT OUTER JOIN corestrictions ON component.cokey = corestrictions.cokey WHERE component.cokey = c.cokey AND corestrictions.reskind IN ('bedrock, lithic', 'duripan', 'bedrock, densic', 'bedrock, paralithic', 'fragipan', 'natric', 'ortstein', 'permafrost', 'petrocalcic', 'petrogypsic')  
+ 	AND reskind IS NOT NULL ORDER BY resdept_r) AS toprestriction, c.cokey,  
+hzname,  
+hzdept_r,  
+hzdepb_r,  
+CASE WHEN (hzdepb_r-hzdept_r) IS NULL THEN 0 ELSE CAST((hzdepb_r-hzdept_r) AS INT) END AS thickness,    
+ awc_r,  
+ aws025wta,  
+ aws050wta,  
+ aws0100wta,  
+ brockdepmin,  
+ texture,  
+ ch.chkey  
+ 	INTO #acpf  
+ 	FROM legend  AS l  
+ 	INNER JOIN mapunit AS mu ON mu.lkey = l.lkey  
+ 	
+                           
+               AND (CASE
+                                    WHEN @area_type = 2
+                                        THEN LEFT(areasymbol, 2)
+                                    ELSE
+                                        areasymbol
+                                END = @area) 
+							
+                               --AND mu.mukey = 422311
+ 	INNER JOIN muaggatt mt on mu.mukey=mt.mukey  
+ 	INNER JOIN component c ON c.mukey = mu.mukey  AND (CASE
+                                    WHEN 1 = @major
+                                        THEN 0
+                                    WHEN majcompflag = 'Yes'
+                                        THEN 0
+                                    ELSE
+                                        1
+                                END = 0
+                               ) 
+ 	INNER JOIN chorizon ch ON ch.cokey = c.cokey and CASE WHEN hzdept_r IS NULL THEN 2  
+ 	WHEN awc_r IS NULL THEN 2  
+ 	WHEN awc_r = 0 THEN 2 ELSE 1 END = 1  
+ 	INNER JOIN chtexturegrp ct ON ch.chkey=ct.chkey and ct.rvindicator = 'yes'  
+ 	ORDER by l.areasymbol, mu.musym, hzdept_r   
+
+	
+ 	SELECT mukey, cokey,  SUM (DISTINCT sum_comp) AS sum_comp2 
+ 	INTO #muacpf 
+ 	FROM #acpf AS acpf2 
+ 	WHERE acpf2.cokey=cokey 
+ 	GROUP BY mukey, cokey  
+
+	
+ 	SELECT mukey, cokey, sum_comp2,  SUM (sum_comp2) over(partition by #muacpf.mukey ) AS sum_comp3 
+ INTO #muacpf2  
+ 	FROM #muacpf  
+ 	GROUP BY mukey, cokey, sum_comp2 
+
+	
+ 	 	SELECT mukey, cokey,  CASE WHEN sum_comp2 = sum_comp3 THEN 1 
+ 	ELSE CAST (CAST (sum_comp2 AS  decimal (5,2)) / CAST (sum_comp3 AS decimal (5,2)) AS decimal (5,2)) END AS WEIGHTED_COMP_PCT 
+ 	INTO #muacpf3 
+ 	FROM #muacpf2 
+
+	
+
+  SELECT muname, compname, cokey, MIN(hzdept_r) AS min_t 
+ 	INTO #hortopdepth 
+ 	FROM #acpf 
+ 	WHERE texture NOT LIKE '%PM%' and texture NOT LIKE '%DOM' and texture NOT LIKE '%MPT%' AND texture NOT LIKE '%MUCK' AND texture NOT LIKE '%PEAT%' 
+ 	GROUP BY muname, compname, cokey 
+
+  SELECT #hortopdepth.cokey,
+ 	hzname, 
+ 	hzdept_r,
+ 	hzdepb_r, 
+ 	thickness, 
+ 	texture AS texture_surf, 
+ 	awc_r AS awc_surf, 
+ 	chkey 
+ 	INTO #acpf2 
+ 	FROM #hortopdepth 
+ 	INNER JOIN #acpf on #hortopdepth.cokey=#acpf.cokey AND #hortopdepth.min_t = #acpf.hzdept_r 
+ 	ORDER BY #hortopdepth.cokey, hzname 
+
+
+   	SELECT 
+ 	muname, 
+ 	mukey, 
+ 	cokey, 
+ 	hzname, 
+ 	restrictiodepth, 
+ 	hzdept_r, 
+ 	hzdepb_r, 
+ 	CASE WHEN (hzdepb_r-hzdept_r) IS NULL THEN 0 ELSE CAST ((hzdepb_r-hzdept_r) AS INT) END AS thickness, 
+ 	texture, 
+ 	CASE when awc_r IS NULL THEN 0 ELSE awc_r END AS awc_r, 
+ 	chkey 
+ 	INTO #acpfhzn 
+ 	FROM #acpf 
+
+SELECT 
+ 	CASE  WHEN hzdepb_r <= 100 THEN hzdepb_r WHEN hzdepb_r > 100 and hzdept_r < 100 THEN 100 ELSE 0 END AS InRangeBot, 
+ 	CASE  WHEN hzdept_r < 100 then hzdept_r ELSE 0 END AS InRangeTop, 
+ 	CASE  WHEN hzdepb_r <= 20  THEN hzdepb_r WHEN hzdepb_r > 20  and hzdept_r < 20 THEN 20  ELSE 0 END AS InRangeBot_0_20, 
+ 	CASE  WHEN hzdept_r < 20 then hzdept_r ELSE 0 END AS InRangeTop_0_20, 
+ 	CASE  WHEN hzdepb_r <= 50  THEN hzdepb_r WHEN hzdepb_r > 50  and hzdept_r < 50 THEN 50  ELSE 20 END AS InRangeBot_20_50, 
+ 	CASE  WHEN hzdept_r < 50 then hzdept_r ELSE 20 END AS InRangeTop_20_50, 
+ 	CASE  WHEN hzdepb_r <= 100  THEN hzdepb_r WHEN hzdepb_r > 100  and hzdept_r < 100 THEN 100  ELSE 50 END AS InRangeBot_50_100, 
+ 	CASE  WHEN hzdept_r < 100 then hzdept_r ELSE 50 END AS InRangeTop_50_100,  
+ 	awc_r, cokey, mukey 
+ 	INTO #aws 
+ 	FROM #acpf 
+ 	ORDER BY cokey 
+
+  SELECT mukey, cokey, 
+ 	SUM((InRangeBot - InRangeTop)*awc_r) AS aws100, 
+ 	SUM((InRangeBot_0_20 - InRangeTop_0_20)*awc_r) AS aws_0_20, 
+ 	SUM((InRangeBot_20_50 - InRangeTop_20_50)*awc_r) AS aws_20_50, 
+ 	SUM((InRangeBot_50_100 - InRangeTop_50_100)*awc_r) AS aws_50_100 
+ 	INTO #aws100 
+ 	FROM #aws  
+ 	GROUP BY  mukey, cokey 
+
+	
+ 	SELECT mukey, cokey, chkey, 
+thickness, 
+restrictiodepth,
+ 	(awc_r*thickness) as th_awc_r 
+ 	INTO #acpf3 
+ 	FROM #acpfhzn 
+ 	ORDER BY mukey, cokey, chkey 
+
+    SELECT mukey, cokey, restrictiodepth, 
+ 	CAST(sum(thickness) AS float(2)) AS sum_thickness, 
+ 	CAST(sum(th_awc_r) AS float(2)) AS sum_awc_r 
+ 	INTO #acpf4 
+ 	FROM #acpf3 
+ 	GROUP BY mukey, cokey, restrictiodepth 
+ 	ORDER BY mukey 
+
+
+  SELECT mukey, cokey, CASE WHEN sum_thickness < restrictiodepth then sum_thickness  else restrictiodepth end AS restrictiondepth 
+ 	INTO #depthtest 
+ 	FROM #acpf4 
+
+
+  SELECT #acpf4.mukey, #acpf4.cokey, 
+sum_thickness, 
+#depthtest.restrictiondepth, 
+ 	(sum_awc_r) AS profile_Waterstorage, 
+CASE WHEN #depthtest.restrictiondepth = 0 THEN  (sum_awc_r/sum_thickness)
+ELSE (sum_awc_r/#depthtest.restrictiondepth) END AS wtavg_awc_r_to_restrict 
+ 	INTO #acpfwtavg 
+ 	FROM #acpf4  
+ 	INNER JOIN #depthtest on #acpf4.cokey=#depthtest.cokey  AND #acpf4.mukey = 422296
+ 	ORDER by #acpf4.mukey, #acpf4.cokey 
+
+
+
+  SELECT DISTINCT 
+ #acpf.state, 
+ #acpf.areasymbol, 
+ #acpf.areaname, 
+ #acpf.musym, 
+ #acpf.mukey, 
+ #acpf.cokey, 
+ #acpf.muname, 
+ majcompflag, 
+ comppct_r, 
+ #acpf.compname, 
+ compkind, 
+ localphase, 
+ slope_l, 
+ slope_r, 
+ slope_h, 
+ CAST(aws100 AS Decimal(5,1)) AS aws100_dcp, 
+ 		CAST(aws_0_20 AS Decimal(5,1)) AS aws_0_20_dcp, 
+ 			CAST(aws_20_50 AS Decimal(5,1)) AS aws_20_50_dcp, 
+ 				CAST(aws_50_100 AS Decimal(5,1)) AS aws_50_100_dcp, 
+ CAST(profile_Waterstorage AS Decimal(5,1)) AS AWS_profile_dcp, 
+ CAST(wtavg_awc_r_to_restrict AS Decimal(5,1)) AS AWS_restrict_dcp, 
+ sum_thickness, 
+ CAST(#acpfwtavg.restrictiondepth/2.54 AS int)  restrictiondepth_IN, 
+ #acpfwtavg.restrictiondepth, 
+ TOPrestriction, 
+ #acpf2.chkey, 
+ #acpf2.hzname, 
+ 	CAST(#acpf2.hzdept_r/2.54 AS int)  AS hzdept_r, 
+ 	CAST(#acpf2.hzdepb_r/2.54 AS int) AS hzdeb_r 
+ INTO #alldata 
+ 	FROM #acpf2 
+ 	INNER JOIN #acpf on #acpf.cokey = #acpf2.cokey  
+ 	LEFT OUTER JOIN #aws100 on #acpf.cokey = #aws100.cokey 
+ 	LEFT OUTER JOIN #acpfwtavg on #acpf.cokey = #acpfwtavg.cokey 
+ 	ORDER BY #acpf.state, #acpf.areasymbol, #acpf.areaname, #acpf.musym 
+
+
+  SELECT #main.musym, #main.muname,  #main.compname, #main.comppct_r, MIN_Wet,  #alldata.aws100_dcp , #main.mukey, 
+ 	CASE WHEN annflodfreq = 'Frequent' THEN 1 
+ 	WHEN annflodfreq = 'Very frequent' THEN 1 ELSE 0 END AS ffreq, 
+ 	CASE WHEN  annfloddur = 'Long (7 to 30 days)' THEN 1 
+ 	WHEN annfloddur = 'Very long (more than 30 days)' THEN 1 ELSE 0 END AS fdur, taxorder, taxsuborder, 
+ 	#main.cokey 
+ 	INTO #laststep 
+ 	FROM #main 
+ 	LEFT OUTER JOIN #alldata ON #alldata.cokey=#main.cokey 
+ 	INNER JOIN #wet ON #wet.cokey=#main.cokey  
+ 	ORDER BY #main.muname, #main.musym, #main.comppct_r DESC, #main.compname, #main.cokey 
+
+  SELECT mukey, cokey, musym AS 'Mapunit Symbol', muname AS 'Mapunit Name',  compname AS 'Component Name', comppct_r AS 'Component Percent', MIN_Wet AS 'Depth to Wetness (cm)',  aws100_dcp AS 'Available Water Storage (100 cm)' , 
+ 	ffreq + fdur AS 'Flooding (freq/dur)', taxsuborder, 
+ 	CASE WHEN taxorder = 'Histosols' AND MIN_Wet <= 30 THEN 'wet' 
+  WHEN MIN_Wet <= 30 THEN 'wet'
+ 	WHEN ffreq = 1 AND fdur = 1 THEN 'wet' 
+ 	WHEN LEFT (taxsuborder,3) = 'Aqu' AND aws100_dcp  >= 15.24 THEN 'wet-mesic' 
+ 	WHEN MIN_Wet BETWEEN 30 AND 91  AND aws100_dcp  >= 15.24  THEN 'wet-mesic' 
+ 	WHEN aws100_dcp  >= 15.24 THEN 'mesic' 
+ 	WHEN LEFT (taxsuborder,3) = 'Aqu' AND aws100_dcp  < 15.24 THEN 'mesic' 
+ 	WHEN MIN_Wet BETWEEN 30 AND 91  AND aws100_dcp  < 15.24  THEN 'mesic' 
+ 	WHEN aws100_dcp BETWEEN 7.62 AND 15.24 THEN 'dry-mesic' 
+ 	WHEN aws100_dcp  < 7.62 THEN  'dry' ELSE 'N/A' 
+ 	END AS 'Soil Moisture Site Condition' 
+ 	FROM #laststep 
+ 	ORDER BY muname, musym, comppct_r DESC, cokey
+      `;
+    }
+
+    // ============ Table rendering & sorting ============
+    function renderTable(headers, rows) {
+      const table = document.createElement("table");
+      table.id = "dataTable";
+
+      const thead = document.createElement("thead");
+      const trh = document.createElement("tr");
+      headers.forEach((h, i) => {
+        const th = document.createElement("th");
+        th.textContent = h;                  // visible label (SQL alias)
+        th.setAttribute("data-colname", h);  // raw label for export
+        const ind = document.createElement("span");
+        ind.className = "sort-ind";
+        th.appendChild(ind);
+        th.addEventListener("click", () => sortTable(table, i));
+        trh.appendChild(th);
+      });
+      thead.appendChild(trh);
+
+      const tbody = document.createElement("tbody");
+      rows.forEach(r => {
+        const tr = document.createElement("tr");
+        r.forEach(c => {
+          const td = document.createElement("td");
+          td.textContent = c == null ? "" : c;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      return table;
+    }
+
+    let sortState = { col: -1, dir: 1 }; // 1 asc, -1 desc
+    function sortTable(table, colIdx) {
+      const tbody = table.tBodies[0];
+      const rows = Array.from(tbody.rows);
+      const ths = table.tHead.rows[0].cells;
+
+      if (sortState.col === colIdx) {
+        sortState.dir = -sortState.dir;
+      } else {
+        sortState.col = colIdx;
+        sortState.dir = 1;
+      }
+
+      Array.from(ths).forEach(th => th.querySelector(".sort-ind").textContent = "");
+      ths[colIdx].querySelector(".sort-ind").textContent = sortState.dir === 1 ? "▲" : "▼";
+
+      rows.sort((a, b) => {
+        const av = a.cells[colIdx].textContent;
+        const bv = b.cells[colIdx].textContent;
+
+        const aNum = parseFloat(av);
+        const bNum = parseFloat(bv);
+        let cmp;
+        if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
+          cmp = aNum - bNum;
+        } else {
+          cmp = av.localeCompare(bv);
+        }
+        return sortState.dir * cmp;
+      });
+
+      rows.forEach(r => tbody.appendChild(r));
+    }
+
+    function toCSV(tableEl) {
+      const rows = [];
+      const trsHead = tableEl.tHead ? tableEl.tHead.rows : [];
+      const trsBody = tableEl.tBodies[0] ? tableEl.tBodies[0].rows : [];
+
+      function esc(val) {
+        const s = (val ?? "").toString();
+        const needsQuotes = /[",\n]/.test(s);
+        const escaped = s.replace(/"/g, '""');
+        return needsQuotes ? `"${escaped}"` : escaped;
+      }
+
+      if (trsHead.length > 0) {
+        const hdr = Array.from(trsHead[0].cells).map(th =>
+          esc(th.getAttribute("data-colname") || th.textContent.replace(/[▲▼]/g, ""))
+        );
+        rows.push(hdr.join(","));
+      }
+      for (const tr of trsBody) {
+        const cols = Array.from(tr.cells).map(td => esc(td.textContent));
+        rows.push(cols.join(","));
+      }
+      return rows.join("\n");
+    }
+
+    function downloadBlob(content, filename, mime) {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function enableExports(tableEl, filenameBase) {
+      const btnCsv = $("#btnCsv");
+      const btnXls = $("#btnXls");
+      btnCsv.disabled = false;
+      btnXls.disabled = false;
+
+      btnCsv.onclick = () => {
+        const csv = toCSV(tableEl);
+        downloadBlob(csv, `${filenameBase}.csv`, "text/csv;charset=utf-8");
+      };
+
+      btnXls.onclick = () => {
+        const clone = tableEl.cloneNode(true);
+        if (clone.tHead && clone.tHead.rows.length > 0) {
+          Array.from(clone.tHead.rows[0].cells).forEach(th => {
+            const ind = th.querySelector(".sort-ind");
+            if (ind) ind.textContent = "";
+          });
+        }
+        const html = `<html><head><meta charset="UTF-8"></head><body>${clone.outerHTML}</body></html>`;
+        downloadBlob(html, `${filenameBase}.xls`, "application/vnd.ms-excel");
+      };
+    }
+
+    function setRowCount(tableEl) {
+      const bodyRows = tableEl && tableEl.tBodies[0] ? Array.from(tableEl.tBodies[0].rows) : [];
+      const total = bodyRows.length;
+      const shown = bodyRows.filter(r => r.style.display !== "none").length;
+      const label = total === shown ? `${total.toLocaleString()} rows` : `${shown.toLocaleString()} of ${total.toLocaleString()} rows`;
+      $("#rowCount").textContent = label;
+    }
+
+    function applyTableFilter(tableEl, term) {
+      if (!tableEl || !tableEl.tBodies[0]) return;
+      const q = (term || "").trim().toLowerCase();
+      const rows = Array.from(tableEl.tBodies[0].rows);
+      rows.forEach(row => {
+        if (!q) {
+          row.style.display = "";
+          return;
+        }
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? "" : "none";
+      });
+      setRowCount(tableEl);
+    }
+
+    // ============ Report runner ============
+    async function runReport(areasymbol) {
+      const container = $("#tableContainer");
+      container.innerHTML = "";
+      $("#rowCount").textContent = "";
+      showMessage("Loading report...", "info");
+      const filterInput = $("#tableFilter");
+      filterInput.value = "";
+      filterInput.disabled = true;
+
+      try {
+        const sql = buildReportQuery(areasymbol);
+        const data = await sdaPost(sql, "json+columnname");
+        const table = Array.isArray(data.Table) ? data.Table : [];
+        if (table.length === 0) {
+          showMessage("No data available for this survey area.", "info");
+          $("#btnCsv").disabled = true;
+          $("#btnXls").disabled = true;
+          $("#tableFilter").disabled = true;
+          return;
+        }
+
+        const headers = table[0];
+        const rows = table.slice(1);
+        const tbl = renderTable(headers, rows);
+        container.appendChild(tbl);
+
+        updateMetadataDefinitions(headers);
+
+        const input = $("#tableFilter");
+        input.disabled = false;
+        input.oninput = () => applyTableFilter(tbl, input.value);
+
+        setRowCount(tbl);
+        enableExports(tbl, `Soil_Moisture_Regime_Site_Assessment_Guide_${areasymbol}`);
+        clearMessage();
+      } catch (err) {
+        console.error(err);
+        showMessage(`Error loading SDA report for ${areasymbol}: ${err.message}`, "error");
+        $("#btnCsv").disabled = true;
+        $("#btnXls").disabled = true;
+        $("#tableFilter").disabled = true;
+      }
+    }
+
+    // ============ Init ============
+    document.addEventListener("DOMContentLoaded", () => {
+      loadSSAs(); // dynamic list from SDA
+
+      const backBtn = $("#backToTopBtn");
+
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 280) {
+          backBtn.classList.add("show");
+        } else {
+          backBtn.classList.remove("show");
+        }
+      });
+
+      backBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      $("#ssa").addEventListener("change", (e) => {
+        const areasymbol = e.target.value;
+        if (!areasymbol) {
+          $("#status").style.display = "none";
+          $("#tableContainer").innerHTML = "";
+          $("#rowCount").textContent = "";
+          $("#btnCsv").disabled = true;
+          $("#btnXls").disabled = true;
+          $("#tableFilter").value = "";
+          $("#tableFilter").disabled = true;
+          return;
+        }
+        $("#status").textContent = `Selected: ${e.target.options[e.target.selectedIndex].text}`;
+        $("#status").style.display = "block";
+        runReport(areasymbol);
+      });
+    });
+  </script>
+
+</body>
+</html>
