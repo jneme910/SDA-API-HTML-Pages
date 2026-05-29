@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wisconsin Critical & Sensitive Area Assessment Report</title>
+  <title>Soil Moisture Regime Site Assessment Guide</title>
 
   <style>
     :root {
@@ -146,9 +146,9 @@ tbody tr:nth-child(even) {
 </head>
 <body>
 
-  <div class="header">
-    <h1>Wisconsin Critical &amp; Sensitive Area Assessment Report</h1>
-    <p>A <strong>Area Risk Assessment</strong> under NRCS guidance is a process to identify and map ecologically or hydrologically sensitive land features so that conservation practices, grazing systems, or development can be planned to avoid or minimize harm. Select a Soil Survey Area (SSA). Sorted by Map Unit Name. Data from NRCS SDA Tabular API.</p>
+  <div class="header" id="top">
+    <h1>Soil Moisture Regime Site Assessment Guide</h1>
+    <p>This dataset is dynamically loaded from our live database. Once a survey is selected a table appears. The information in this report is primarily used to select species for seeding mixes that will do well based on the soil moisture regimes in the project area. Information for vegetative species selection can be found in NRCS technical notes and standards located in the Field Office Technical Guide (FOTG). Common NRCS standards that use soil moisture regime data include Critical Area Planting (342), Conservation Cover (327), and Forage &amp; Biomass Planting (512). For more information about the table, see Report Metadata below.</p>
 
   </div>
 
@@ -172,35 +172,19 @@ tbody tr:nth-child(even) {
       <div id="tableContainer" class="table-wrapper"></div>
     </div>
       <div class="section">
-      <h2 style="color:#003f87;margin:.2rem 0 .6rem;">Definitions</h2>
-     <ul>
-  <li><strong>Area Symbol</strong> — A symbol that uniquely identifies a single occurrence of a particular type of soil survey area (e.g., "WI025").</li>
-  <li><strong>Area Name</strong> — The name given to a specific Soil Survey Area.</li>
-  <li><strong>Map Unit Name</strong> — The correlated name of a map unit, which typically includes the names of the major soil components and often a slope range (e.g., "Antigo silt loam, 0 to 2 percent slopes").</li>
-  <li><strong>MUKEY</strong> — A non-connotative string of characters used as a unique persistent identifier (primary key) for a record in the mapunit table.</li>
-  <li><strong>MUYSM</strong> — The symbol used to uniquely identify a soil map unit within a specific soil survey (e.g., "C49A").</li>
-  
-        <li><strong>Slope Class Rating / localphase</strong> — localphase is a criterion used locally with the component name to identify specific soil components. Categorizes suitability based on slope_r: &lt;12% is <strong><i>Suitable</i></strong>, 12–30% is <strong><i>'Limited'</i></strong>, and &gt;=30% is <strong><i>Not Suitable</i></strong>.</li>
-
-        <li><strong>Drainage Class Rating</strong> — Identifies natural drainage conditions and refers to the frequency and duration of wet periods. Categorizes suitability based on drainagecl: 'Well', 'Somewhat excessively', or 'Excessively drained' are <strong><i>Suitable</i></strong>; 'Somewhat poorly' or 'Moderately well' are <strong><i>'Limited'</i></strong>; and 'Poorly' or 'Very poorly' are <strong><i>Not Suitable</i></strong>.</li>
-
-        <li><strong>Flooding Class Rating</strong> — Identifies the annual probability of a flood event. Categorizes suitability based on flodfreq: 'None' is <strong><i>Suitable</i></strong>, 'Occasional' or 'Rare' is <strong><i>'Limited'</i></strong>, and 'Very Frequent' or 'Frequent' is <strong><i>Not Suitable</i></strong>.</li>
-
-        <li><strong>Ponding Class Rating</strong> — Standing water in a closed depression that is removed only by percolation, transpiration, or evaporation. Categorizes suitability based on pondfreq: 'None' is <strong><i>Suitable</i></strong>, 'Occasional' or 'Rare' is <strong><i>'Limited'</i></strong>, and 'Very Frequent' or 'Frequent' is <strong><i>Not Suitable</i></strong>.</li>
-
-        <li><strong>Restriction Kind / pondfreq</strong> — Describes the type of nearly continuous root-limiting soil restriction, such as "Lithic bedrock" or "Fragipan". Selects the first_restriction_kind for the dominant component to identify the primary physical limitation.</li>
-
-        <li><strong>Restriction Depth Class Rating</strong> — The representative depth from the soil surface to the upper boundary of a restrictive layer. Categorizes suitability based on rv_first_restriction_depth: &gt;=150cm is <strong><i>Suitable</i></strong>, 50–150cm is <strong><i>'Limited'</i></strong>, and &lt;50cm is <strong><i>Not Suitable</i></strong>.</li>
-
-        <li><strong>Hydric Class Rating</strong> — Proportion of the map unit that is hydric based on component flags. Derives a descriptive status ('Hydric', 'Nonhydric', 'Predominantly Hydric', 'Predominantly Nonhydric', or 'Partially Hydric') by comparing hydric component counts against the total map unit composition.</li>
-
-        <li><strong>WI FSG ID</strong> — The Forage Suitability Group ID identifies soil components with similar potential and limitations for forage production. Aggregates ecological class IDs using dominant component logic, specifically filtered for Wisconsin ecological classes.</li>  
-        
-        <li><strong>Not Suitable</strong> — This category applies to soils with one or more properties so <strong>unfavorable or difficult to overcome</strong> that the soil is generally considered unsatisfactory for the intended use [1]. The limitations (such as extreme slopes or very shallow restrictive layers) typically make the specified use impractical or cost-prohibitive.</li>
-        <li><strong>Limited</strong> — This designation identifies soils that possess one or more properties that are <strong>moderately unfavorable</strong> for a specified use [1]. These constraints are significant enough to require special planning, custom design, or increased maintenance to ensure the soil performs as intended within the assessment criteria.</li>
-        <li><strong>Suitable</strong> — This classification indicates that the soil has properties that are <strong>favorable or easily managed</strong> for a specific use [1]. Soils in this category generally do not require special conservation practices or design considerations to mitigate limitations for the intended use.</li>
-        <li><strong>Not Rated</strong> — This is a neutral designation indicating that a soil component <strong>cannot be evaluated</strong> for a specific interpretation [3]. This typically occurs due to <strong>insufficient data</strong> in the database or because the soil component is not applicable to the specific land use criteria being assessed.</li>
-        <li><strong>Null or No Data</strong> — This represents a state where <strong>no value exists</strong> in the database. It indicates that the underlying soil properties required to generate a rating or class were completely unpopulated in the source data, preventing any calculation or categorization from being attempted.</li>
+      <h2 style="color:#003f87;margin:.2rem 0 .6rem;">Report Metadata</h2>
+      <p><a href="#top">Back to top</a></p>
+      <ul>
+        <li><strong>mukey:</strong> A non-connotative string of characters used to uniquely identify a record in the Mapunit table.</li>
+        <li><strong>cokey:</strong> A non-connotative string of characters used to uniquely identify a record in the Mapunit table and component table.</li>
+        <li><strong>Mapunit Symbol:</strong> The symbol used to uniquely identify the soil mapunit in the soil survey. The Map Unit Symbols are just symbols displayed on a map and link to data. A map unit symbol is used to uniquely identify the soil mapunit in the soil survey and not ids. They are a way to link the spatial data to tabular data and does not necessary have any meaning except to provide someone a way to look up the tabular data.</li>
+        <li><strong>Mapunit Name:</strong> Correlated name of the mapunit (recommended name or field name for surveys in progress).</li>
+        <li><strong>compname:</strong> Name assigned to a component based on its range of properties.</li>
+        <li><strong>Component Percent:</strong> The percentage of the component of the mapunit. (RV)</li>
+        <li><strong>Depth to Wetness (cm):</strong> Depth at which the component has a saturated layer. In field is blank, then no observed saturated layer is observed</li>
+        <li><strong>Available Water Storage (100 cm):</strong> Total Available Water, reported in cm, to a depth of 100cm, or to the depth of a root restrictive layer if the restrictive layer is shallower than 100cm</li>
+        <li><strong>Flooding (frequency + duration):</strong> The flooding field will be 0, 1 or 2. One point is given for meeting the frequency criteria and one point for meeting the duration. A component with a frequency of Frequent or Very Frequent in any month will be given 1 point. A component with a duration of Long or Very Long will be given 1 point. The values for frequency and duration are summed and reported in this field.</li>
+        <li><strong>Soil Moisture Site Condition:</strong> Soils with a WET soil moisture condition are: Histosols, soils with a saturated zone &lt;= 30cm, or soils that are frequently or very frequently flooded for long or very long durations. Soils with a WET-MESIC soil moisture condition do not meet the definition of WET AND are in the suborder of aquic and have an AWC to 100cm of &gt;= 15.24cm OR have a saturated layer deeper than 30cm but not deeper than 91cm. Soils with a soil moisture condition of MESIC do not meet the definition of WET or WET-MESIC AND have an AWC to 100cm &gt;= to 15.24 cm OR have a suborder of aquic and an AWC to 100cm &lt; 15.24 cm OR have a saturated layer between 30cm and 91cm AND an AWC to 100cm &lt; 15.24 cm. . Soils with a DRY-MESIC soil moisture condition do not meet the criteria of WET, WET-MESIC or MESIC and have an AWC to 100cm between 7.62cm to 15.24 cm. Soils with a DRY soil moisture condition do not meet the criteria of WET, WETMESIC, MESIC or DRY-MESIC and have an AWC to 100cm less than 7.62cm.</li>
       </ul>
     </div>
   </div>
@@ -306,7 +290,7 @@ SELECT
     ), 'No Data') AS first_restriction_kind,
     
     CAST (ROUND ((
-     SELECT TOP 1 MIN (resdept_r) / 30.48
+     SELECT TOP 1 MIN (resdept_r) 
      FROM component AS c3
      INNER JOIN corestrictions ON corestrictions.cokey=c3.cokey
      WHERE c3.cokey=x.cokey AND reskind IN ( 
@@ -561,8 +545,8 @@ ORDER BY muname ASC, musym, mukey;
         const tbl = renderTable(headers, rows);
         container.appendChild(tbl);
 
-        $("#rowCount").textContent = `${rows.length.toLocaleString()} Map Unit "rows" returned`;
-        enableExports(tbl, `WI_Critical_Sensitive_Assessment_${areasymbol}`);
+        $("#rowCount").textContent = `${rows.length.toLocaleString()} rows`;
+        enableExports(tbl, `Soil_Moisture_Regime_Site_Assessment_Guide_${areasymbol}`);
         clearMessage();
       } catch (err) {
         console.error(err);

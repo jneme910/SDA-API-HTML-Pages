@@ -14,6 +14,7 @@
       --blue: #003f87; --blue2: #004d7a; --border: #e0e0e0;
       --text: #222; --muted: #666; --bg: #f5f5f5;
       --info-bg: #e8f0f7; --error-bg: #ffe8ec; --error: #b00020;
+      --panel: #ffffff; --ok: #1f7a56;
     }
     * { box-sizing: border-box; }
 
@@ -21,6 +22,16 @@
       margin: 0; background: var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: var(--text); line-height: 1.45;
+    }
+
+    body[data-theme="dark"] {
+      --bg: #111824;
+      --panel: #172131;
+      --border: #2a3647;
+      --text: #e8edf5;
+      --muted: #a9b7c8;
+      --info-bg: #153048;
+      --error-bg: #3a1d2a;
     }
 
     .header {
@@ -57,9 +68,16 @@
       outline: none;
     }
 
+    .header-tools {
+      margin-top: .75rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+
     .container { max-width: 98vw; margin: 0 auto; padding: 1.5rem 2rem; }
     .section {
-      background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      background: var(--panel); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1);
       padding: 1rem 1.25rem; margin-bottom: 1rem; border: 1px solid var(--border);
       border-top: 4px solid rgba(0, 63, 135, .18);
       transition: box-shadow .2s ease, transform .2s ease;
@@ -127,6 +145,9 @@
       display: flex; gap: .5rem; flex-wrap: wrap;
       align-items: center; margin-bottom: .6rem;
     }
+    .toolbar .spacer {
+      flex: 1 1 20px;
+    }
     .filter-input {
       min-width: 260px;
       max-width: 520px;
@@ -153,7 +174,59 @@
       position: relative;
       border: 1px solid #e0e0e0;
       border-radius: 6px;
-      background: #fff;
+      background: var(--panel);
+    }
+
+    .table-wrapper.compact table {
+      font-size: .9rem;
+    }
+    .table-wrapper.compact th,
+    .table-wrapper.compact td {
+      padding: .4rem .45rem;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: .6rem;
+      margin-bottom: .75rem;
+    }
+
+    .kpi-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .55rem .7rem;
+      background: linear-gradient(135deg, rgba(0,63,135,.08), rgba(0,77,122,.03));
+    }
+
+    .kpi-card b {
+      display: block;
+      color: var(--blue);
+      font-size: 1.2rem;
+    }
+
+    .chip-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .45rem;
+      margin: .4rem 0 .65rem;
+    }
+
+    .chip-filter {
+      border: 1px solid #c9dced;
+      background: #eef4fb;
+      color: #20476c;
+      border-radius: 999px;
+      padding: .25rem .62rem;
+      font-size: .84rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip-filter.active {
+      background: #003f87;
+      border-color: #003f87;
+      color: #fff;
     }
 
     /* --- CORRECTED SCRIPT --- */
@@ -286,6 +359,12 @@ tbody tr:nth-child(even) {
       <a class="quick-link" href="#reportSection">Go to Report Table</a>
     </div>
 
+    <div class="header-tools">
+      <button class="btn" id="btnTheme" type="button">Theme: Light</button>
+      <button class="btn" id="btnDensity" type="button">Density: Comfortable</button>
+      <button class="btn" id="btnShare" type="button">Copy Share Link</button>
+    </div>
+
   </div>
 
   <div class="container">
@@ -300,10 +379,17 @@ tbody tr:nth-child(even) {
 
     <div class="section" id="reportSection">
       <div id="messages"></div>
+      <div id="kpiGrid" class="kpi-grid"></div>
+      <div id="chipFilters" class="chip-filters"></div>
       <div class="toolbar">
         <input id="tableFilter" class="filter-input" type="text" placeholder="Filter table rows" disabled>
+        <select id="conditionFilter" style="max-width: 260px" disabled>
+          <option value="">All site conditions</option>
+        </select>
         <button class="btn" id="btnCsv" disabled>Export CSV</button>
         <button class="btn" id="btnXls" disabled>Export Excel (XLS)</button>
+        <button class="btn" id="btnJson" disabled>Export JSON</button>
+        <span class="spacer"></span>
         <span id="rowCount" class="muted"></span>
       </div>
       <div id="tableContainer" class="table-wrapper"></div>
@@ -324,6 +410,15 @@ tbody tr:nth-child(even) {
   <script>
     // ============ Utilities ============
     const SDA_URL = "https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest";
+    const PREF_KEY = "soil-moisture-report-prefs-v1";
+    const reportState = {
+      table: null,
+      headers: [],
+      rows: [],
+      selectedArea: "",
+      selectedCondition: "",
+      density: "comfortable"
+    };
 
     const $ = sel => document.querySelector(sel);
 
@@ -331,6 +426,34 @@ tbody tr:nth-child(even) {
       $("#messages").innerHTML = `<div class="${type}">${html}</div>`;
     }
     function clearMessage() { $("#messages").innerHTML = ""; }
+
+    function getPrefs() {
+      try {
+        return JSON.parse(localStorage.getItem(PREF_KEY) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function savePrefs(next) {
+      const prefs = { ...getPrefs(), ...next };
+      localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+    }
+
+    function setTheme(theme) {
+      const mode = theme === "dark" ? "dark" : "light";
+      document.body.setAttribute("data-theme", mode);
+      $("#btnTheme").textContent = `Theme: ${mode === "dark" ? "Dark" : "Light"}`;
+      savePrefs({ theme: mode });
+    }
+
+    function setDensity(mode) {
+      reportState.density = mode === "compact" ? "compact" : "comfortable";
+      const wrapper = $("#tableContainer");
+      wrapper.classList.toggle("compact", reportState.density === "compact");
+      $("#btnDensity").textContent = `Density: ${reportState.density === "compact" ? "Compact" : "Comfortable"}`;
+      savePrefs({ density: reportState.density });
+    }
 
     const HEADER_METADATA_MAP = {
       "mukey": { column: "mukey", preferredTable: "mapunit" },
@@ -949,6 +1072,74 @@ ELSE (sum_awc_r/#depthtest.restrictiondepth) END AS wtavg_awc_r_to_restrict
       $("#rowCount").textContent = label;
     }
 
+    function getColumnIndex(headers, name) {
+      return headers.findIndex(h => String(h).toLowerCase() === String(name).toLowerCase());
+    }
+
+    function renderKpis(headers, rows) {
+      const grid = $("#kpiGrid");
+      const idxCond = getColumnIndex(headers, "Soil Moisture Site Condition");
+      const idxAws = getColumnIndex(headers, "Available Water Storage (100 cm)");
+      if (idxCond < 0) {
+        grid.innerHTML = "";
+        return;
+      }
+
+      const counts = {};
+      let awsSum = 0;
+      let awsN = 0;
+      rows.forEach(r => {
+        const c = String(r[idxCond] || "N/A");
+        counts[c] = (counts[c] || 0) + 1;
+        const n = Number.parseFloat(r[idxAws]);
+        if (!Number.isNaN(n)) {
+          awsSum += n;
+          awsN += 1;
+        }
+      });
+
+      const total = rows.length;
+      const meanAws = awsN ? (awsSum / awsN).toFixed(1) : "N/A";
+      grid.innerHTML = [
+        `<div class="kpi-card"><b>${total}</b>Total rows</div>`,
+        `<div class="kpi-card"><b>${Object.keys(counts).length}</b>Site conditions</div>`,
+        `<div class="kpi-card"><b>${meanAws}</b>Mean AWS (100 cm)</div>`
+      ].join("");
+
+      renderConditionChips(counts);
+      fillConditionDropdown(Object.keys(counts));
+    }
+
+    function renderConditionChips(counts) {
+      const box = $("#chipFilters");
+      const allCount = Object.values(counts).reduce((a, b) => a + b, 0);
+      const chips = [`<button class="chip-filter ${reportState.selectedCondition ? "" : "active"}" data-condition="">All (${allCount})</button>`]
+        .concat(Object.entries(counts)
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([name, n]) => `<button class="chip-filter ${reportState.selectedCondition === name ? "active" : ""}" data-condition="${escHtml(name)}">${escHtml(name)} (${n})</button>`));
+      box.innerHTML = chips.join("");
+      box.querySelectorAll(".chip-filter").forEach(btn => {
+        btn.addEventListener("click", () => {
+          reportState.selectedCondition = btn.getAttribute("data-condition") || "";
+          $("#conditionFilter").value = reportState.selectedCondition;
+          applyCombinedFilters();
+        });
+      });
+    }
+
+    function fillConditionDropdown(conditions) {
+      const sel = $("#conditionFilter");
+      sel.innerHTML = '<option value="">All site conditions</option>';
+      conditions.sort((a, b) => a.localeCompare(b)).forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      });
+      sel.disabled = false;
+      sel.value = reportState.selectedCondition;
+    }
+
     function applyTableFilter(tableEl, term) {
       if (!tableEl || !tableEl.tBodies[0]) return;
       const q = (term || "").trim().toLowerCase();
@@ -964,6 +1155,52 @@ ELSE (sum_awc_r/#depthtest.restrictiondepth) END AS wtavg_awc_r_to_restrict
       setRowCount(tableEl);
     }
 
+    function applyCombinedFilters() {
+      const tableEl = reportState.table;
+      if (!tableEl || !tableEl.tBodies[0]) return;
+      const q = ($("#tableFilter").value || "").trim().toLowerCase();
+      const cond = reportState.selectedCondition;
+      const idxCond = getColumnIndex(reportState.headers, "Soil Moisture Site Condition");
+
+      Array.from(tableEl.tBodies[0].rows).forEach(row => {
+        const matchesText = !q || row.textContent.toLowerCase().includes(q);
+        const rowCond = idxCond >= 0 ? row.cells[idxCond].textContent : "";
+        const matchesCond = !cond || rowCond === cond;
+        row.style.display = matchesText && matchesCond ? "" : "none";
+      });
+      setRowCount(tableEl);
+      renderConditionChips(
+        reportState.rows.reduce((acc, r) => {
+          const c = String(r[idxCond] || "N/A");
+          acc[c] = (acc[c] || 0) + 1;
+          return acc;
+        }, {})
+      );
+    }
+
+    function toJSON(headers, rows) {
+      return JSON.stringify(rows.map(r => {
+        const obj = {};
+        headers.forEach((h, i) => { obj[h] = r[i]; });
+        return obj;
+      }), null, 2);
+    }
+
+    function copyShareLink() {
+      const params = new URLSearchParams();
+      if (reportState.selectedArea) params.set("ssa", reportState.selectedArea);
+      if ($("#tableFilter").value.trim()) params.set("q", $("#tableFilter").value.trim());
+      if (reportState.selectedCondition) params.set("cond", reportState.selectedCondition);
+      params.set("theme", document.body.getAttribute("data-theme") || "light");
+      params.set("density", reportState.density);
+      const url = `${location.origin}${location.pathname}?${params.toString()}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showMessage("Share link copied to clipboard.", "info");
+      }).catch(() => {
+        showMessage("Unable to copy share link. Copy this URL manually: " + escHtml(url), "info");
+      });
+    }
+
     // ============ Report runner ============
     async function runReport(areasymbol) {
       const container = $("#tableContainer");
@@ -973,6 +1210,9 @@ ELSE (sum_awc_r/#depthtest.restrictiondepth) END AS wtavg_awc_r_to_restrict
       const filterInput = $("#tableFilter");
       filterInput.value = "";
       filterInput.disabled = true;
+      $("#conditionFilter").disabled = true;
+      $("#btnJson").disabled = true;
+      reportState.selectedArea = areasymbol;
 
       try {
         const sql = buildReportQuery(areasymbol);
@@ -991,27 +1231,69 @@ ELSE (sum_awc_r/#depthtest.restrictiondepth) END AS wtavg_awc_r_to_restrict
         const tbl = renderTable(headers, rows);
         container.appendChild(tbl);
 
+        reportState.table = tbl;
+        reportState.headers = headers;
+        reportState.rows = rows;
+
         updateMetadataDefinitions(headers);
+        renderKpis(headers, rows);
 
         const input = $("#tableFilter");
         input.disabled = false;
-        input.oninput = () => applyTableFilter(tbl, input.value);
+        input.oninput = () => applyCombinedFilters();
+
+        const cond = $("#conditionFilter");
+        cond.onchange = () => {
+          reportState.selectedCondition = cond.value;
+          applyCombinedFilters();
+        };
 
         setRowCount(tbl);
         enableExports(tbl, `Soil_Moisture_Regime_Site_Assessment_Guide_${areasymbol}`);
+        $("#btnJson").disabled = false;
+        $("#btnJson").onclick = () => {
+          downloadBlob(toJSON(headers, rows), `Soil_Moisture_Regime_Site_Assessment_Guide_${areasymbol}.json`, "application/json;charset=utf-8");
+        };
+
+        const params = new URLSearchParams(location.search);
+        const q = params.get("q") || "";
+        const condParam = params.get("cond") || "";
+        if (q) {
+          input.value = q;
+        }
+        if (condParam) {
+          reportState.selectedCondition = condParam;
+          $("#conditionFilter").value = condParam;
+        }
+        applyCombinedFilters();
         clearMessage();
       } catch (err) {
         console.error(err);
         showMessage(`Error loading SDA report for ${areasymbol}: ${err.message}`, "error");
         $("#btnCsv").disabled = true;
         $("#btnXls").disabled = true;
+        $("#btnJson").disabled = true;
         $("#tableFilter").disabled = true;
       }
     }
 
     // ============ Init ============
     document.addEventListener("DOMContentLoaded", () => {
+      const prefs = getPrefs();
+      setTheme(prefs.theme || "light");
+      setDensity(prefs.density || "comfortable");
+
       loadSSAs(); // dynamic list from SDA
+
+      $("#btnTheme").addEventListener("click", () => {
+        const next = (document.body.getAttribute("data-theme") || "light") === "light" ? "dark" : "light";
+        setTheme(next);
+      });
+      $("#btnDensity").addEventListener("click", () => {
+        const next = reportState.density === "comfortable" ? "compact" : "comfortable";
+        setDensity(next);
+      });
+      $("#btnShare").addEventListener("click", copyShareLink);
 
       const backBtn = $("#backToTopBtn");
 
@@ -1035,14 +1317,39 @@ ELSE (sum_awc_r/#depthtest.restrictiondepth) END AS wtavg_awc_r_to_restrict
           $("#rowCount").textContent = "";
           $("#btnCsv").disabled = true;
           $("#btnXls").disabled = true;
+          $("#btnJson").disabled = true;
           $("#tableFilter").value = "";
           $("#tableFilter").disabled = true;
+          $("#conditionFilter").value = "";
+          $("#conditionFilter").disabled = true;
+          $("#kpiGrid").innerHTML = "";
+          $("#chipFilters").innerHTML = "";
+          reportState.table = null;
+          reportState.headers = [];
+          reportState.rows = [];
+          reportState.selectedCondition = "";
           return;
         }
         $("#status").textContent = `Selected: ${e.target.options[e.target.selectedIndex].text}`;
         $("#status").style.display = "block";
         runReport(areasymbol);
       });
+
+      const params = new URLSearchParams(location.search);
+      const ssaParam = params.get("ssa");
+      if (ssaParam) {
+        const trySelect = () => {
+          const sel = $("#ssa");
+          const found = Array.from(sel.options).some(o => o.value === ssaParam);
+          if (found) {
+            sel.value = ssaParam;
+            sel.dispatchEvent(new Event("change"));
+            return true;
+          }
+          return false;
+        };
+        setTimeout(() => { trySelect(); }, 400);
+      }
     });
   </script>
 
